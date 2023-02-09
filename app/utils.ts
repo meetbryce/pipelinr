@@ -70,6 +70,47 @@ export function validateEmail(email: unknown): email is string {
   return typeof email === "string" && email.length > 3 && email.includes("@");
 }
 
-export function mydebug() {
-  return;
+export class ClientPipeline {
+  constructor(
+    public id: string,
+    public name: string,
+    public tables: string,
+    public operations: string,
+    public sort_col: string,
+    public sort_desc: int
+  ) {
+    this.id = id;
+    this.name = name;
+    this.tables = tables;
+    this.operations = operations;
+    this.sort_col = sort_col;
+    this.sort_desc = sort_desc;
+    this._host = 'http://127.0.0.1:8123/'; //?query=SELECT%20%2A%20from%20tenant_default.github____org_repos%20FORMAT%20JSON''
+  }
+
+  getTableList() {
+    if (this.tables && this.tables.length > 0) {
+      return this.tables.split(",");
+    } else {
+      return [];
+    }
+  }
+
+  getServerUrl() {
+    let tables = this.getTableList();
+    if (tables.length > 0) {
+      let sort = "";
+      if (this.sort_col) {
+        sort = " ORDER BY " + this.sort_col;
+        if (this.sort_desc) {
+          sort += " DESC";
+        }
+      }
+      let query: string = 'SELECT * from tenant_default.' + tables[0].replace('.','____') + sort + ' LIMIT 1000 FORMAT JSON';
+      this._query = query;
+      return this._host + '?query=' + encodeURIComponent(query);
+    } else {
+      return null;
+    }
+  }
 }

@@ -1,12 +1,17 @@
 import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Form, useCatch, useLoaderData, Link, Outlet } from "@remix-run/react";
+import { Form, useCatch, useLoaderData, Link, Outlet, useRevalidator } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import * as React from "react";
 
+import { ClientPipeline } from "~/utils";
 import { deletePipeline, getPipeline, getPipeTables, queryData } from "~/models/pipeline.server";
 import { requireUserId } from "~/session.server";
+
+// AG GRID
+import 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
+import { ColumnEvent } from 'ag-grid-community';
 
 export async function loader({ request, params }: LoaderArgs) {
   const userId = await requireUserId(request);
@@ -19,14 +24,7 @@ export async function loader({ request, params }: LoaderArgs) {
 
   const api_res = await fetch("http://127.0.0.1:5000/v1/schemas?deep=1");
   const schemas = await api_res.json();
-  let tables = getPipeTables(pipeline.tables);
-  let querydata = [];
-  if (tables.length > 0) {
-    debugger;
-    querydata = await queryData({ userId, id: params.pipelineId });
-  }
-
-  return json({ pipeline, schemas, querydata });
+  return json({ pipeline, schemas });
 }
 
 export async function action({ request, params }: ActionArgs) {
@@ -39,28 +37,84 @@ export async function action({ request, params }: ActionArgs) {
 }
 
 export default function PipelineDetailsPage() {
+  let revalidator = useRevalidator();
   const data = useLoaderData<typeof loader>();
-  let [rowData] = React.useState([]);
+  let [rowData, setRowData] = React.useState([]);
   const defaultColDef = {
     sortable: true,
     resizable: true
   };
+  const pipeline = new ClientPipeline(
+    data.pipeline.id, 
+    data.pipeline.name, 
+    data.pipeline.tables, 
+    [],
+    null, 0);
 
-  let [columnDefs] = React.useState([
-    { field: 'make' },
-    { field: 'model' },
-    { field: 'price' }
+  let [columnDefs, setColumnDefs] = React.useState([
+    { field: 'id' },
+    { field: 'node_id' },
+    { field: 'name' }
   ]);
 
-  if (data.querydata.length > 0) {
-    let cols: {field: string}[] = [];
-    Object.keys(data.querydata[0]).map((col) => {
-      cols.push({field: col});
-    });
-    [columnDefs] = React.useState(cols);
-
-    [rowData] = React.useState(data.querydata);
+  const reloadData = () => {
+    let url = pipeline.getServerUrl();
+    console.log(pipeline._query);
+    fetch(url)
+    .then(response => response.json()).
+    then(res => {
+        let zerocomp = () => 0;
+        if (res.data.length > 0) {
+          let cols: {field: string, comparator: any}[] = [];
+          Object.keys(res.data[0]).map((col) => {
+            cols.push({field: col, comparator: zerocomp});
+          });
+          setColumnDefs(cols);     
+          setRowData(res.data);
+        }
+      }
+    );
   }
+
+  const handleColSort = (event: ColumnEvent) => {
+    console.log(event);
+    let dir = event.column.getSort();
+    let desc = 0;
+    let sort_col = event.column.getColId();
+    let reload = false;
+    if (dir == null && pipeline.sort_col != null) {
+      pipeline.sort_col = null;
+      console.log("removing sort from ", sort_col);
+      return false;
+    } 
+    if (dir == 'desc') {
+      desc = 1;
+    }
+    if (pipeline.sort_col != sort_col) {
+      pipeline.sort_col = sort_col;
+      reload = true;
+    }
+    if (pipeline.sort_desc != desc) {
+      pipeline.sort_desc = desc;
+      reload = true;
+    }
+    if (reload) {
+      console.log("new sort ", sort_col, " desc:", desc);
+      setTimeout(reloadData, 0);
+    }
+    return false;
+  }
+
+  const onGridReady = (params) => {
+    let cols = params.columnApi.getColumns();
+    cols.map(col => {
+      col.addEventListener('sortChanged', handleColSort);
+    });
+  };
+
+  React.useEffect(() => {
+    reloadData();
+  }, [pipeline.getServerUrl()]);
 
   return (
     <div className="flex flex-row h-full">
@@ -94,7 +148,9 @@ export default function PipelineDetailsPage() {
             <AgGridReact
                 rowData={rowData}
                 columnDefs={columnDefs}
-                defaultColDef={defaultColDef}>
+                defaultColDef={defaultColDef}
+                onGridColumnsChanged={onGridReady}
+            >
             </AgGridReact>
         </div>      
           <hr className="my-4" />
@@ -129,3 +185,36 @@ export function CatchBoundary() {
 
   throw new Error(`Unexpected caught response with status: ${caught.status}`);
 }
+
+/*
+
+Unfortunately this code does not work
+
+  // Create an AG data source to fetch data directly from CH
+  const createDatasource = function(pipeline: ClientPipeline) {
+    return {
+        // called by the grid when more rows are required
+        getRows: params => {
+            // get data for request from server
+            fetch(pipeline.getServerUrl())
+              .then(response => response.json())
+              .then(res => {
+                console.log(res);
+                if (res.data.length > 0) {
+                  let cols: {field: string}[] = [];
+                  Object.keys(res.data[0]).map((col) => {
+                    cols.push({field: col});
+                  });
+                  setColumnDefs(cols);     
+                }
+                params.successCallback({
+                  rowData: res.data
+                })
+              }).catch(err => {
+                console.log(err);
+                params.failCalback(err)
+              });
+        }
+    };
+  }
+*/
