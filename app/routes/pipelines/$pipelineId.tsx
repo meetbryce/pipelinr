@@ -27,8 +27,18 @@ export async function loader({ request, params }: LoaderArgs) {
     throw new Response("Not Found", { status: 404 });
   }
 
-  const api_res = await fetch("http://127.0.0.1:5000/v1/schemas?deep=1");
-  const schemas: Schema[] = await api_res.json();
+  let schemas: Schema[] = [];
+  try {
+    const api_res = await fetch("http://127.0.0.1:5000/v1/schemas?deep=1");
+    if (api_res.ok) {
+      schemas = await api_res.json();
+    } else {
+      throw Error("Unify fetch failed");
+    }
+  } catch (error) {
+    console.log(error);
+    schemas = [{"schema": error, "tables": []}];
+  }
   return json({ pipeline, schemas });
 }
 

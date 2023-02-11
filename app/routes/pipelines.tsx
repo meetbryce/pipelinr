@@ -24,10 +24,7 @@ if (typeof document != "undefined") {
 export async function loader({ request }: LoaderArgs) {
   const userId = await requireUserId(request);
   const pipelineListItems = await getPipelineListItems({ userId });
-  const api_res = await fetch("http://127.0.0.1:5000/v1/schemas?deep=1");
-
-  const schemas = await api_res.json();
-  return json({ pipelineListItems, schemas });
+  return json({ pipelineListItems });
 }
 
 export default function PipelinesPage() {
