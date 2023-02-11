@@ -71,13 +71,18 @@ export function validateEmail(email: unknown): email is string {
 }
 
 export class ClientPipeline {
+  get query(): string {
+    return this._query;
+  }
+  private readonly _host: string;
+  private _query: string;
   constructor(
     public id: string,
     public name: string,
     public tables: string,
-    public operations: string,
-    public sort_col: string,
-    public sort_desc: int
+    public operations: string[],
+    public sort_col?: string,
+    public sort_desc?: number
   ) {
     this.id = id;
     this.name = name;
@@ -86,6 +91,7 @@ export class ClientPipeline {
     this.sort_col = sort_col;
     this.sort_desc = sort_desc;
     this._host = 'http://127.0.0.1:8123/'; //?query=SELECT%20%2A%20from%20tenant_default.github____org_repos%20FORMAT%20JSON''
+    this._query = '';
   }
 
   getTableList() {
@@ -108,7 +114,7 @@ export class ClientPipeline {
       }
       let query: string = 'SELECT * from tenant_default.' + tables[0].replace('.','____') + sort + ' LIMIT 1000 FORMAT JSON';
       this._query = query;
-      return this._host + '?query=' + encodeURIComponent(query);
+      return new URL(`${this._host}?query=${encodeURIComponent(query)}`);
     } else {
       return null;
     }
