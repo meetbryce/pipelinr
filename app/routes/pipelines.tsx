@@ -30,7 +30,7 @@ export default function PipelinesPage() {
           <Link to=".">Pipelines</Link>
         </h1>
         <div className="flex space-x-6">
-          <button>{user.email}</button>
+          <button disabled>{user.email}</button>
           <Form action="/logout" method="post">
             <button
               type="submit"

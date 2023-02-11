@@ -124,7 +124,7 @@ export default function PipelineDetailsPage() {
   }, [pipeline.getServerUrl()]);
 
   return (
-    <div className="flex flex-row h-full">gst
+    <div className="flex flex-row h-full">
       <div>
         <h2>Datasets</h2>
         {data.schemas.length === 0 ? (
