@@ -89,7 +89,7 @@ export default function PipelineDetailsPage() {
     let sort_col = event.column.getColId();
     let reload = false;
     if (dir == null && pipeline.sort_col != null) {
-      pipeline.sort_col = '';
+      pipeline.sort_col = "";
       console.log("removing sort from ", sort_col);
       return false;
     }
@@ -125,10 +125,11 @@ export default function PipelineDetailsPage() {
 
   return (
     <div className="flex flex-row h-full">
-      <div>
-        <h2>Datasets</h2>
+      <div className="pr-4">
+        <h2 className="font-medium">Datasets</h2>
+        <hr className="mt-1 mb-2" />
         {data.schemas.length === 0 ? (
-          <p className="p-4">No schemas defined yet</p>
+          <p className="p-2">No schemas defined yet</p>
         ) : (
           <table className="table-auto">
             <tbody>
@@ -137,9 +138,9 @@ export default function PipelineDetailsPage() {
                 const qual = schema.schema + "." + table;
                 return (
 
-                  <tr key={qual} className="even:bg-slate-50">
-                    <td>{schema.schema}</td>
-                    <td><Link to={qual} className="text-blue-500">{table}</Link></td>
+                  <tr key={qual} className="p-2 even:bg-slate-50">
+                    <td className={"pl-2 py-2"}>{schema.schema}</td>
+                    <td className={"px-2 py-2"}><Link to={qual} className="text-blue-500">{table}</Link></td>
                   </tr>
                 );
               })
@@ -149,11 +150,12 @@ export default function PipelineDetailsPage() {
         )}
 
       </div>
-      <div className="border-solid border-2 overflow-auto h-screen">
-        <p className="bg-slate-50"><span
-          className="text-2xl font-bold">{data.pipeline.name}</span><span>&nbsp;&nbsp;&nbsp;tables: {data.pipeline.tables}</span>
+      <div className="overflow-auto w-full">
+        <p className="py-2">
+          <span className="text-2xl font-bold mr-4">{data.pipeline.name}</span>
+          <span>tables: {data.pipeline.tables}</span>
         </p>
-        <div className="ag-theme-alpine" style={{ height: 500, width: 1200 }}>
+        <div className="ag-theme-alpine" style={{ height: 500, width: "auto" }}>
           <AgGridReact
             rowData={rowData}
             columnDefs={columnDefs}
@@ -162,11 +164,10 @@ export default function PipelineDetailsPage() {
           >
           </AgGridReact>
         </div>
-        <hr className="my-4" />
-        <Form method="post">
+        <Form method="post" className="my-4 text-right">
           <button
             type="submit"
-            className="rounded bg-blue-500  py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
+            className="rounded bg-red-600 text-sm py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
           >
             Delete
           </button>
