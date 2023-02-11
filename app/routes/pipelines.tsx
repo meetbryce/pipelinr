@@ -55,9 +55,9 @@ export default function PipelinesPage() {
               <svg aria-hidden="true" className="w-6 h-6 mr-1 md:mr-2 text-gray-400" fill="currentColor"
                    viewBox="0 0 20 20"
                    xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd"
+                <path fillRule="evenodd"
                       d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                      clip-rule="evenodd"></path>
+                      clipRule="evenodd"></path>
               </svg>
               <span
                 className="mr-1 text-sm font-medium text-gray-500 dark:text-gray-400">FIXME: name of pipeline here</span>
@@ -71,23 +71,21 @@ export default function PipelinesPage() {
         </div>
         <div className="flex px-6 space-x-1 md:space-x-3">
           <div className="dropdown relative">
-            <a
+            <button
               className="dropdown-toggle px-4 py-2.5 bg-blue-600 text-white font-medium text-sm leading-tight
                   rounded shadow-sm hover:bg-blue-700 hover:shadow-md focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0
                   active:bg-blue-800 active:shadow-lg active:text-white
                   transition duration-150 ease-in-out flex items-center whitespace-nowrap"
-              href="#"
-              type="button"
               id="dropdownMenuButton2"
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
               Select pipeline
-              <svg fill="none" className="w-5 h-5 ml-2" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"
+              <svg fill="none" className="w-5 h-5 ml-2" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"
                    xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"></path>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"></path>
               </svg>
-            </a>
+            </button>
             <ul className="dropdown-menu min-w-max absolute hidden bg-white text-base z-50 float-left py-2 list-none text-left rounded-lg
                   shadow-lg mt-1 hidden m-0 bg-clip-padding border-none ">
               {data.pipelineListItems.map((pipeline) => (
