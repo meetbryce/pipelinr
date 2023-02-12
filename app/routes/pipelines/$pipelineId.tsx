@@ -44,7 +44,7 @@ export async function action({ request, params }: ActionArgs) {
 export default function PipelineDetailsPage() {
   let revalidator = useRevalidator();
   const data = useLoaderData<typeof loader>();
-  let [rowData, setRowData] = React.useState([]);
+  let [rowData, setRowData] = React.useState<object[]>([]);
   const defaultColDef = {
     sortable: true,
     resizable: true
@@ -66,19 +66,33 @@ export default function PipelineDetailsPage() {
     let url = pipeline.getServerUrl();
     if (!url) return;
     console.log(pipeline.query);
-    fetch(url)
-      .then(response => response.json()).then(res => {
-        let zerocomp = () => 0;
-        if (res.data.length > 0) {
-          let cols: { field: string, comparator: any }[] = [];
-          Object.keys(res.data[0]).map((col) => {
-            cols.push({ field: col, comparator: zerocomp });
-          });
-          setColumnDefs(cols);
-          setRowData(res.data);
-        }
+
+    // try {console.log(process.env);}
+
+    // if (process.env["CLICKHOUSE_PASSWORD"]) {
+    //   console.log("you have a password");
+    //   // api_res = await fetch("http://127.0.0.1:5000/v1/schemas?deep=1",
+    //
+    //   // );
+    //   fetch(url, {
+    //     method: "GET",
+    //     credentials: `${process.env.CLICKHOUSE_USER}:${process.env.CLICKHOUSE_PASSWORD}`
+    //   }).then(response => response.json()).then(processResponse);
+    // } else {
+      fetch(url).then(response => response.json()).then(processResponse);
+    // }
+
+    function processResponse(res: {data: object[], errors?: object}) {
+      let zerocomp = () => 0;
+      if (res.data.length > 0) {
+        let cols: { field: string, comparator: any }[] = [];
+        Object.keys(res.data[0]).map((col) => {
+          cols.push({ field: col, comparator: zerocomp });
+        });
+        setColumnDefs(cols);
+        setRowData(res.data);
       }
-    );
+    };
   };
 
   const handleColSort = (event: ColumnEvent) => {
