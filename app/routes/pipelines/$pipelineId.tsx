@@ -152,11 +152,11 @@ export default function PipelineDetailsPage() {
 
       </div>
       <div className="overflow-auto w-full">
-        <p className="py-2">
+        <p className="pb-2">
           <span className="text-2xl font-bold mr-4">{data.pipeline.name}</span>
           <span>tables: {data.pipeline.tables}</span>
         </p>
-        <div className="ag-theme-alpine" style={{ height: "calc(100vh - 310px)", width: "auto" }}>
+        <div className="ag-theme-alpine" style={{ height: "calc(100vh - 330px)", width: "auto" }}>
           <AgGridReact
             rowData={rowData}
             columnDefs={columnDefs}
@@ -168,7 +168,7 @@ export default function PipelineDetailsPage() {
         <Form method="post" className="my-4 text-right">
           <button
             type="submit"
-            className="rounded bg-red-600 text-sm py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
+            className="rounded bg-red-600 text-sm py-2 px-4 text-white hover:bg-red-700 focus:bg-red-400"
           >
             Delete
           </button>
