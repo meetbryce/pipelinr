@@ -156,7 +156,7 @@ export default function PipelineDetailsPage() {
           <span className="text-2xl font-bold mr-4">{data.pipeline.name}</span>
           <span>tables: {data.pipeline.tables}</span>
         </p>
-        <div className="ag-theme-alpine" style={{ height: 500, width: "auto" }}>
+        <div className="ag-theme-alpine" style={{ height: "calc(100vh - 310px)", width: "auto" }}>
           <AgGridReact
             rowData={rowData}
             columnDefs={columnDefs}
