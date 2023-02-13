@@ -67,22 +67,9 @@ export default function PipelineDetailsPage() {
     if (!url) return;
     console.log(pipeline.query);
 
-    // try {console.log(process.env);}
+    fetch(url).then(response => response.json()).then(processResponse);
 
-    // if (process.env["CLICKHOUSE_PASSWORD"]) {
-    //   console.log("you have a password");
-    //   // api_res = await fetch("http://127.0.0.1:5000/v1/schemas?deep=1",
-    //
-    //   // );
-    //   fetch(url, {
-    //     method: "GET",
-    //     credentials: `${process.env.CLICKHOUSE_USER}:${process.env.CLICKHOUSE_PASSWORD}`
-    //   }).then(response => response.json()).then(processResponse);
-    // } else {
-      fetch(url).then(response => response.json()).then(processResponse);
-    // }
-
-    function processResponse(res: {data: object[], errors?: object}) {
+    function processResponse(res: { data: object[], errors?: object }) {
       let zerocomp = () => 0;
       if (res.data.length > 0) {
         let cols: { field: string, comparator: any }[] = [];
@@ -92,7 +79,7 @@ export default function PipelineDetailsPage() {
         setColumnDefs(cols);
         setRowData(res.data);
       }
-    };
+    }
   };
 
   const handleColSort = (event: ColumnEvent) => {
