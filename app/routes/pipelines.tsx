@@ -1,6 +1,8 @@
 import type { LoaderArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Form, Link, NavLink, Outlet, useLoaderData } from "@remix-run/react";
+import { ChevronRightIcon, ChevronDownIcon, Square3Stack3DIcon as PipelineIcon, PlusIcon } from '@heroicons/react/24/outline';
+
 
 import { requireUserId } from "~/session.server";
 import { useUser, /*mydebug*/ } from "~/utils";
@@ -43,7 +45,7 @@ export default function PipelinesPage() {
       </header>
 
       <nav className="flex px-6 py-4" aria-label="Breadcrumb">
-        <ol className="inline-flex items-center space-x-1 md:space-x-3">
+        <ol className="inline-flex items-center space-x-1 md:space-x-2">
           <li>
             <div className="flex items-center">
               <Link to="."
@@ -52,13 +54,7 @@ export default function PipelinesPage() {
           </li>
           <li aria-current="page">
             <div className="flex items-center">
-              <svg aria-hidden="true" className="w-6 h-6 mr-1 md:mr-2 text-gray-400" fill="currentColor"
-                   viewBox="0 0 20 20"
-                   xmlns="http://www.w3.org/2000/svg">
-                <path fillRule="evenodd"
-                      d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                      clipRule="evenodd"></path>
-              </svg>
+              <ChevronRightIcon className="h-5 w-5 mr-1 md:mr-2 flex-shrink-0 text-gray-400" aria-hidden="true" />
               <span
                 className="mr-1 text-sm font-medium text-gray-500 dark:text-gray-400">FIXME: name of pipeline here</span>
             </div>
@@ -81,10 +77,7 @@ export default function PipelinesPage() {
               aria-expanded="false"
             >
               Select pipeline
-              <svg fill="none" className="w-5 h-5 ml-2" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"
-                   xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"></path>
-              </svg>
+              <ChevronDownIcon className="w-5 h-5 ml-2" />
             </button>
             <ul className="dropdown-menu min-w-max absolute hidden bg-white text-base z-50 float-left py-2 list-none text-left rounded-lg
                   shadow-lg mt-1 hidden m-0 bg-clip-padding border-none ">
@@ -107,9 +100,7 @@ export default function PipelinesPage() {
                       "
                     to={pipeline.id}
                   >
-                    <svg fill="none" className="w-4 h-4 mt-0.5 mr-2" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0l4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0l-5.571 3-5.571-3" />
-                    </svg>
+                    <PipelineIcon className="w-4 h-4 mt-0.5 mr-2" />
                     {pipeline.name}
                   </NavLink>
                 </li>
@@ -132,18 +123,16 @@ export default function PipelinesPage() {
                   "
                   to="new"
                 >
-                  <svg fill="none" className="w-4 h-4 mt-0.5 mr-2" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                  </svg>
+                  <PlusIcon className="w-4 h-4 mt-0.5 mr-2" />
                   New pipeline
                 </NavLink>
               </li>
             </ul>
           </div>
           {data.pipelineListItems.length == 0 && (
-            <Link to="new" className="px-4 py-2.5 text-white font-medium rounded bg-blue-600 text-sm hover:bg-blue-700 hover:shadow-md focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0
+            <Link to="new" className="flex px-4 py-2.5 text-white font-medium rounded bg-blue-600 text-sm hover:bg-blue-700 hover:shadow-md focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0
                   active:bg-blue-800 active:shadow-lg active:text-white transition duration-150 ease-in-out">
-              + New Pipeline
+              <PlusIcon className="w-4 h-4 mt-0.5 mr-2" /> New Pipeline
             </Link>
           )}
         </div>
