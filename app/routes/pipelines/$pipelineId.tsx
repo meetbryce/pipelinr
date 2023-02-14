@@ -152,10 +152,10 @@ export default function PipelineDetailsPage() {
 
       </div>
       <div className="overflow-auto w-full">
-        <p className="pb-2">
-          <span className="text-2xl font-bold mr-4">{data.pipeline.name}</span>
-          <span>tables: {data.pipeline.tables}</span>
-        </p>
+        <div className="pb-3 -ml-2 -mt-2 flex flex-wrap items-baseline">
+          <h3 className="ml-2 mt-2 text-lg font-medium leading-6 text-gray-900">{data.pipeline.name}</h3>
+          <p className="ml-2 mt-1 truncate text-sm text-gray-500">Tables: {data.pipeline.tables}</p>
+        </div>
         <div className="ag-theme-alpine" style={{ height: "calc(100vh - 330px)", width: "auto" }}>
           <AgGridReact
             rowData={rowData}

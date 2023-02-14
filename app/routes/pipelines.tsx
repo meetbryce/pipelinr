@@ -55,14 +55,14 @@ export default function PipelinesPage() {
           <li>
             <div className="flex items-center">
               <Link to="."
-                    className="text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">Pipelines</Link>
+                    className="text-sm font-medium text-gray-500 hover:text-blue-600">Pipelines</Link>
             </div>
           </li>
           <li aria-current="page">
             <div className="flex items-center">
               <ChevronRightIcon className="h-5 w-5 mr-1 md:mr-2 flex-shrink-0 text-gray-400" aria-hidden="true" />
               <span
-                className="mr-1 text-sm font-medium text-gray-500 dark:text-gray-400">FIXME: name of pipeline here</span>
+                className="mr-1 text-sm font-medium text-gray-500">FIXME: name of pipeline here</span>
             </div>
           </li>
         </ol>
