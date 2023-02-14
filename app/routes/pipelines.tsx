@@ -29,6 +29,7 @@ export async function loader({ request }: LoaderArgs) {
 
 export default function PipelinesPage() {
   const data = useLoaderData<typeof loader>();
+  const {pipelineListItems} = data;
   const user = useUser();
 
   return (
@@ -72,7 +73,7 @@ export default function PipelinesPage() {
         <div className="w-80 border-r bg-gray-50">
         </div>
         <div className="flex px-6 space-x-1 md:space-x-3">
-          {data.pipelineListItems.length !== 0 && (
+          {pipelineListItems.length !== 0 && (
             // todo: hide when on the index page
             <div className="dropdown relative">
               <button
@@ -89,7 +90,7 @@ export default function PipelinesPage() {
               </button>
               <ul className="dropdown-menu min-w-max absolute hidden bg-white text-base z-50 float-left py-2 list-none text-left rounded-lg
                   shadow-lg mt-1 hidden m-0 bg-clip-padding border-none ">
-                {data.pipelineListItems.map((pipeline) => (
+                {pipelineListItems.map((pipeline) => (
                   <li key={pipeline.id}>
                     <NavLink
                       className="
@@ -138,7 +139,7 @@ export default function PipelinesPage() {
               </ul>
             </div>
           )}
-          {data.pipelineListItems.length === 0 && (
+          {pipelineListItems.length === 0 && (
             <Link
               to="new"
               className="relative block w-full rounded-lg border-2 border-dashed border-gray-300 p-12 text-center hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
@@ -150,7 +151,7 @@ export default function PipelinesPage() {
         </div>
 
         <div className="flex-1 p-6">
-          <Outlet />
+          <Outlet context={{ pipelineListItems }} />
         </div>
       </main>
     </div>
