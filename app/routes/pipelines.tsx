@@ -73,6 +73,7 @@ export default function PipelinesPage() {
         </div>
         <div className="flex px-6 space-x-1 md:space-x-3">
           {data.pipelineListItems.length !== 0 && (
+            // todo: hide when on the index page
             <div className="dropdown relative">
               <button
                 className="dropdown-toggle px-4 py-2.5 bg-blue-600 text-white font-medium text-sm leading-tight
