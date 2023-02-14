@@ -32,11 +32,11 @@ export default function PipelinesPage() {
           <Link to=".">Pipelines</Link>
         </h1>
         <div className="flex space-x-6">
-          <button disabled>{user.email}</button>
+          <button className='text-sm' disabled>{user.email}</button>
           <Form action="/logout" method="post">
             <button
               type="submit"
-              className="rounded bg-slate-600 py-2 px-4 text-blue-100 hover:bg-blue-500 active:bg-blue-600"
+              className="rounded bg-slate-600 py-2 px-4 text-blue-100 text-sm hover:bg-blue-500 active:bg-blue-600"
             >
               Logout
             </button>
