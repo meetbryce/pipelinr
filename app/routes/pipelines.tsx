@@ -2,17 +2,19 @@ import type { LoaderArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Form, Link, NavLink, Outlet, useLoaderData } from "@remix-run/react";
 import {
-  ChevronRightIcon,
   ChevronDownIcon,
-  Square3Stack3DIcon as PipelineIcon,
-  PlusIcon
+  ChevronRightIcon,
+  PlusIcon,
+  Square3Stack3DIcon as PipelineIcon
 } from "@heroicons/react/24/outline";
 
 
 import { requireUserId } from "~/session.server";
-import { useUser /*mydebug*/ } from "~/utils";
+import { useUser } from "~/utils";
 import { getPipelineListItems } from "~/models/pipeline.server";
 import * as React from "react";
+import { Fragment } from "react";
+import { Menu, Transition } from "@headlessui/react";
 
 if (typeof document != "undefined") {
   import("tw-elements" as any);
@@ -29,8 +31,11 @@ export async function loader({ request }: LoaderArgs) {
 
 export default function PipelinesPage() {
   const data = useLoaderData<typeof loader>();
-  const {pipelineListItems} = data;
+  const { pipelineListItems } = data;
   const user = useUser();
+
+  const inactiveClasses = "flex text-gray-700 hover:bg-gray-100";
+  const activeClasses = "flex bg-gray-200 text-gray-900";
 
   return (
     <div className="flex h-screen flex-col">
@@ -59,87 +64,62 @@ export default function PipelinesPage() {
                     className="text-sm font-medium text-gray-500 hover:text-blue-600">Pipelines</Link>
             </div>
           </li>
-          <li aria-current="page">
+          <li>
             <div className="flex items-center">
               <ChevronRightIcon className="h-5 w-5 mr-1 md:mr-2 flex-shrink-0 text-gray-400" aria-hidden="true" />
-              <span
-                className="mr-1 text-sm font-medium text-gray-500">FIXME: name of pipeline here</span>
+              <Menu as="div" className="relative inline-block text-left">
+                <div>
+                  <Menu.Button
+                    className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-100">
+                    Select pipeline {/* fixme: show the name of the current pipeline if viewing a pipeline */}
+                    <ChevronDownIcon className="-mr-1 ml-2 h-5 w-5" aria-hidden="true" />
+                  </Menu.Button>
+                </div>
+
+                <Transition
+                  as={Fragment}
+                  enter="transition ease-out duration-100"
+                  enterFrom="transform opacity-0 scale-95"
+                  enterTo="transform opacity-100 scale-100"
+                  leave="transition ease-in duration-75"
+                  leaveFrom="transform opacity-100 scale-100"
+                  leaveTo="transform opacity-0 scale-95"
+                >
+                  <Menu.Items
+                    className="absolute left-0 z-10 mt-2 w-56 origin-top-left divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <div className="py-1">
+                      {pipelineListItems.map((pipeline) => (
+                        <NavLink
+                          to={`/pipelines/${pipeline.id}`}
+                          className={({ isActive }) => isActive ? activeClasses : inactiveClasses}
+                        >
+                          <Menu.Item as="div" className="flex w-full px-4 py-2 text-sm">
+                            <PipelineIcon className="w-4 h-4 mt-0.5 mr-2" />
+                            {pipeline.name}
+                          </Menu.Item>
+                        </NavLink>
+                      ))}
+                      <NavLink
+                        to="/pipelines/new" end
+                        className={({ isActive }) => isActive ? activeClasses : inactiveClasses}
+                      >
+                        <Menu.Item as="div" className="flex w-full px-4 py-2 text-sm">
+                          <PlusIcon className="w-4 h-4 mt-0.5 mr-2" />
+                          New pipeline
+                        </Menu.Item>
+                      </NavLink>
+                    </div>
+                  </Menu.Items>
+                </Transition>
+              </Menu>
             </div>
           </li>
         </ol>
       </nav>
 
       <main className="flex flex-col h-full bg-white">
-        <div className="w-80 border-r bg-gray-50">
-        </div>
-        <div className="flex px-6 space-x-1 md:space-x-3">
-          {pipelineListItems.length !== 0 && (
-            // todo: hide when on the index page
-            <div className="dropdown relative">
-              <button
-                className="dropdown-toggle px-4 py-2.5 bg-blue-600 text-white font-medium text-sm leading-tight
-                  rounded shadow-sm hover:bg-blue-700 hover:shadow-md focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0
-                  active:bg-blue-800 active:shadow-lg active:text-white
-                  transition duration-150 ease-in-out flex items-center whitespace-nowrap"
-                id="dropdownMenuButton2"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                Select pipeline
-                <ChevronDownIcon className="w-5 h-5 ml-2" />
-              </button>
-              <ul className="dropdown-menu min-w-max absolute hidden bg-white text-base z-50 float-left py-2 list-none text-left rounded-lg
-                  shadow-lg mt-1 hidden m-0 bg-clip-padding border-none ">
-                {pipelineListItems.map((pipeline) => (
-                  <li key={pipeline.id}>
-                    <NavLink
-                      className="
-                      flex
-                      dropdown-item
-                      text-sm
-                      py-2
-                      px-4
-                      font-normal
-                      block
-                      w-full
-                      whitespace-nowrap
-                      bg-transparent
-                      text-gray-700
-                      hover:bg-gray-100
-                      "
-                      to={pipeline.id}
-                    >
-                      <PipelineIcon className="w-4 h-4 mt-0.5 mr-2" />
-                      {pipeline.name}
-                    </NavLink>
-                  </li>
-                ))}
-                <li>
-                  <NavLink
-                    className="
-                    flex
-                    dropdown-item
-                    text-sm
-                    py-2
-                    px-4
-                    font-normal
-                    block
-                    w-full
-                    whitespace-nowrap
-                    bg-transparent
-                    text-gray-700
-                    hover:bg-gray-100
-                  "
-                    to="new"
-                  >
-                    <PlusIcon className="w-4 h-4 mt-0.5 mr-2" />
-                    New pipeline
-                  </NavLink>
-                </li>
-              </ul>
-            </div>
-          )}
-          {pipelineListItems.length === 0 && (
+        {pipelineListItems.length === 0 && (
+          <div className="flex px-6 space-x-1 md:space-x-3">
             <Link
               to="new"
               className="relative block w-full rounded-lg border-2 border-dashed border-gray-300 p-12 text-center hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
@@ -147,10 +127,10 @@ export default function PipelinesPage() {
               <PipelineIcon className="mx-auto h-10 w-10 text-gray-400" />
               <span className="mt-2 font-medium text-gray-900">Create a new Pipeline</span>
             </Link>
-          )}
-        </div>
+          </div>
+        )}
 
-        <div className="flex-1 p-6">
+        <div className="flex-1 px-6 py-4">
           <Outlet context={{ pipelineListItems }} />
         </div>
       </main>
