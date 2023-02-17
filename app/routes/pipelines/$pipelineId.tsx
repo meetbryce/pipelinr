@@ -156,6 +156,7 @@ export default function PipelineDetailsPage() {
           <p className="ml-2 mt-1 truncate text-sm text-gray-500">Tables: {data.pipeline.tables}</p>
         </div>
         <div className="ag-theme-alpine" style={{ height: "calc(100vh - 330px)", width: "auto" }}>
+          {/* todo: user inter and leverage font-feature-settings: 'tnum'; for tabular numbers */}
           <AgGridReact
             rowData={rowData}
             columnDefs={columnDefs}
