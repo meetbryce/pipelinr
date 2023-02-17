@@ -4,7 +4,7 @@ import { Form, Link, Outlet, useCatch, useLoaderData, useRevalidator } from "@re
 import invariant from "tiny-invariant";
 import * as React from "react";
 
-import { ClientPipeline } from "~/utils";
+import { ClientPipeline, unifyServer } from "~/utils";
 import { deletePipeline, getPipeline } from "~/models/pipeline.server";
 import { requireUserId } from "~/session.server";
 
@@ -27,9 +27,13 @@ export async function loader({ request, params }: LoaderArgs) {
     throw new Response("Not Found", { status: 404 });
   }
 
+  let unifyConfigRes = await fetch(unifyServer() + "/v1/dbconf");
+  let unifyDbConfig = await unifyConfigRes.json();
+  console.log(unifyDbConfig);
+
   let schemas: Schema[] = [];
   try {
-    const api_res = await fetch("http://127.0.0.1:5000/v1/schemas?deep=1");
+    const api_res = await fetch(unifyServer() + "/v1/schemas?deep=1");
     if (api_res.ok) {
       schemas = await api_res.json();
     } else {
@@ -39,7 +43,7 @@ export async function loader({ request, params }: LoaderArgs) {
     console.log(error);
     schemas = [{"schema": error, "tables": []}];
   }
-  return json({ pipeline, schemas });
+  return json({ pipeline, schemas, unifyDbConfig });
 }
 
 export async function action({ request, params }: ActionArgs) {
@@ -64,7 +68,7 @@ export default function PipelineDetailsPage() {
     data.pipeline.name,
     data.pipeline.tables,
     [],
-    undefined, 0);
+    undefined, 0, data.unifyDbConfig);
 
   let [columnDefs, setColumnDefs] = React.useState([
     { field: "id" },
@@ -76,7 +80,10 @@ export default function PipelineDetailsPage() {
     let url = pipeline.getServerUrl();
     if (!url) return;
 
-    fetch(url).then(response => response.json()).then(processResponse);
+    fetch(url, {
+      method: 'GET',
+      headers: pipeline.getDbAuthHeaders()
+    }).then(response => response.json()).then(processResponse);
 
     function processResponse(res: { data: object[], errors?: object }) {
       let zerocomp = () => 0;
