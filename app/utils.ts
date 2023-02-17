@@ -127,7 +127,7 @@ export class ClientPipeline {
       }
       let query: string = 'SELECT * from tenant_default.' + tables[0].replace('.','____') + sort + ' LIMIT 1000 FORMAT JSON';
       this._query = query;
-      return new URL(`http://${this.db_config['db_host']}'?query=${encodeURIComponent(query)}`);
+      return new URL(`http://${this.db_config['db_host']}?query=${encodeURIComponent(query)}`);
     } else {
       return null;
     }

@@ -18,6 +18,7 @@ export const sessionStorage = createCookieSessionStorage({
 });
 
 const USER_SESSION_KEY = "userId";
+const DB_CONF_KEY = "dbConfig";
 
 export async function getSession(request: Request) {
   const cookie = request.headers.get("Cookie");
@@ -30,6 +31,14 @@ export async function getUserId(
   const session = await getSession(request);
   const userId = session.get(USER_SESSION_KEY);
   return userId;
+}
+
+export async function getDbConfig(
+  request: Request
+): Promise<{ db_host: string; db_user: string; db_password: string }> {
+  const session = await getSession(request);
+  const dbConf = session.get(DB_CONF_KEY);
+  return dbConf;
 }
 
 export async function getUser(request: Request) {
