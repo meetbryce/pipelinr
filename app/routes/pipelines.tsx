@@ -1,6 +1,6 @@
 import type { LoaderArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Form, Link, NavLink, Outlet, useLoaderData } from "@remix-run/react";
+import { Link, NavLink, Outlet, useLoaderData } from "@remix-run/react";
 import {
   ChevronDownIcon,
   ChevronRightIcon,
@@ -15,6 +15,7 @@ import { getPipelineListItems } from "~/models/pipeline.server";
 import * as React from "react";
 import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
+import Navigation from "~/components/Navigation";
 
 if (typeof document != "undefined") {
   import("tw-elements" as any);
@@ -39,22 +40,7 @@ export default function PipelinesPage() {
 
   return (
     <div className="flex h-screen flex-col">
-      <header className="flex items-center justify-between bg-slate-800 px-6 py-4 text-white">
-        <h1 className="text-xl font-bold">
-          <Link to=".">Pipelines</Link>
-        </h1>
-        <div className="flex space-x-6">
-          <button className="text-sm" disabled>{user.email}</button>
-          <Form action="/logout" method="post">
-            <button
-              type="submit"
-              className="rounded bg-slate-600 py-2 px-4 text-blue-100 text-sm hover:bg-blue-500 active:bg-blue-600"
-            >
-              Logout
-            </button>
-          </Form>
-        </div>
-      </header>
+      <Navigation user={user} />
 
       <nav className="flex px-6 py-4" aria-label="Breadcrumb">
         <ol className="inline-flex items-center space-x-1 md:space-x-2">
@@ -90,6 +76,7 @@ export default function PipelinesPage() {
                     <div className="py-1">
                       {pipelineListItems.map((pipeline) => (
                         <NavLink
+                          key={pipeline.id}
                           to={`/pipelines/${pipeline.id}`}
                           className={({ isActive }) => isActive ? activeClasses : inactiveClasses}
                         >

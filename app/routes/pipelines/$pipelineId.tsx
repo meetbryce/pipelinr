@@ -1,17 +1,17 @@
 import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Form, useCatch, useLoaderData, Link, Outlet, useRevalidator } from "@remix-run/react";
+import { Form, Link, Outlet, useCatch, useLoaderData, useRevalidator } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import * as React from "react";
 
 import { ClientPipeline } from "~/utils";
-import { deletePipeline, getPipeline, getPipeTables, queryData } from "~/models/pipeline.server";
+import { deletePipeline, getPipeline } from "~/models/pipeline.server";
 import { requireUserId } from "~/session.server";
 
 // AG GRID
 import "ag-grid-enterprise";
 import { AgGridReact } from "ag-grid-react";
-import { ColumnEvent, GridColumnsChangedEvent } from "ag-grid-community";
+import type { ColumnEvent, GridColumnsChangedEvent } from "ag-grid-community";
 
 type Schema = {
   schema: string,
@@ -65,7 +65,6 @@ export default function PipelineDetailsPage() {
   const reloadData = () => {
     let url = pipeline.getServerUrl();
     if (!url) return;
-    console.log(pipeline.query);
 
     fetch(url).then(response => response.json()).then(processResponse);
 
