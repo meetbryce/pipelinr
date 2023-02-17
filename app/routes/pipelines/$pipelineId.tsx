@@ -7,11 +7,8 @@ import * as React from "react";
 import { ClientPipeline, unifyServer } from "~/utils";
 import { deletePipeline, getPipeline } from "~/models/pipeline.server";
 import { requireUserId } from "~/session.server";
-
-// AG GRID
-import "ag-grid-enterprise";
-import { AgGridReact } from "ag-grid-react";
-import type { ColumnEvent, GridColumnsChangedEvent } from "ag-grid-community";
+import SmartTable from "~/components/SmartTable";
+import { ColumnEvent } from "ag-grid-community";
 
 type Schema = {
   schema: string,
@@ -59,10 +56,6 @@ export default function PipelineDetailsPage() {
   let revalidator = useRevalidator();
   const data = useLoaderData<typeof loader>();
   let [rowData, setRowData] = React.useState<object[]>([]);
-  const defaultColDef = {
-    sortable: true,
-    resizable: true
-  };
   const pipeline = new ClientPipeline(
     data.pipeline.id,
     data.pipeline.name,
@@ -128,14 +121,6 @@ export default function PipelineDetailsPage() {
     return false;
   };
 
-  const onGridReady = (params: GridColumnsChangedEvent) => {
-    let cols = params.columnApi.getColumns();
-    if (!cols) return;
-    cols.map(col => {
-      col.addEventListener("sortChanged", handleColSort);
-    });
-  };
-
   React.useEffect(() => {
     reloadData();
   }, [pipeline.getServerUrl()]);
@@ -172,15 +157,12 @@ export default function PipelineDetailsPage() {
           <h3 className="ml-2 mt-2 text-lg font-medium leading-6 text-gray-900">{data.pipeline.name}</h3>
           <p className="ml-2 mt-1 truncate text-sm text-gray-500">Tables: {data.pipeline.tables}</p>
         </div>
-        <div className="ag-theme-alpine" style={{ height: "calc(100vh - 330px)", width: "auto" }}>
-          {/* todo: user inter and leverage font-feature-settings: 'tnum'; for tabular numbers */}
-          <AgGridReact
-            rowData={rowData}
+        <div className="w-auto h-[calc(100vh-260px)]">
+          <SmartTable
             columnDefs={columnDefs}
-            defaultColDef={defaultColDef}
-            onGridColumnsChanged={onGridReady}
-          >
-          </AgGridReact>
+            handleColSort={handleColSort}
+            rowData={rowData}
+          />
         </div>
         <Form method="post" className="my-4 text-right">
           <button
