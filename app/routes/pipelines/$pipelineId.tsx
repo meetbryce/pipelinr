@@ -36,9 +36,9 @@ export async function loader({ request, params }: LoaderArgs) {
     } else {
       throw Error("Unify fetch failed");
     }
-  } catch (error) {
+  } catch (error: any) {
     console.log(error);
-    schemas = [{"schema": error, "tables": []}];
+    schemas = [{ "schema": error.message, "tables": [] }];
   }
   return json({ pipeline, schemas, unifyDbConfig });
 }
