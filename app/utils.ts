@@ -1,6 +1,5 @@
 import { useMatches } from "@remix-run/react";
 import { useMemo } from "react";
-import { t } from "vitest/dist/index-2dd51af4";
 
 import type { User } from "~/models/user.server";
 
@@ -72,33 +71,34 @@ export function validateEmail(email: unknown): email is string {
 }
 
 export function unifyServer() {
-  return process.env.UNIFY_HOST || 'http://127.0.0.1:5000';
+  return process.env.UNIFY_HOST || "http://127.0.0.1:5000";
 }
 
 export class ClientPipeline {
   get query(): string {
     return this._query;
   }
-  private readonly _host: string;
+
   private _query: string;
+
   constructor(
     public id: string,
     public name: string,
     public tables: string,
-    public operations: string,
+    public operations: [],
+    public db_config: { "db_backend": string, "db_host": string, "db_user": string, "db_password": string },
     public sort_col?: string,
-    public sort_desc?: number,
-    public db_config: {'db_backend': string, 'db_host':string, 'db_user':string, 'db_password': string}
-) {
+    public sort_desc?: number
+  ) {
     this.id = id;
     this.name = name;
     this.tables = tables;
     this.operations = operations;
     this.sort_col = sort_col;
     this.sort_desc = sort_desc;
-    this._query = '';
+    this._query = "";
     this.db_config = db_config; //'http://127.0.0.1:8123/'; //?query=SELECT%20%2A%20from%20tenant_default.github____org_repos%20FORMAT%20JSON''
-    this.db_config['db_host'] = this.db_config['db_host'].replace("localhost", "127.0.0.1");   
+    this.db_config["db_host"] = this.db_config["db_host"].replace("localhost", "127.0.0.1");
   }
 
   getTableList() {
@@ -111,7 +111,7 @@ export class ClientPipeline {
 
   getDbAuthHeaders() {
     let headers = new Headers();
-    headers.set('Authorization', 'Basic ' + btoa(this.db_config['db_user'] + ":" + this.db_config['db_password']));
+    headers.set("Authorization", "Basic " + btoa(this.db_config["db_user"] + ":" + this.db_config["db_password"]));
     return headers;
   }
 
@@ -125,9 +125,9 @@ export class ClientPipeline {
           sort += " DESC";
         }
       }
-      let query: string = 'SELECT * from tenant_default.' + tables[0].replace('.','____') + sort + ' LIMIT 1000 FORMAT JSON';
+      let query: string = "SELECT * from tenant_default." + tables[0].replace(".", "____") + sort + " LIMIT 1000 FORMAT JSON";
       this._query = query;
-      return new URL(`http://${this.db_config['db_host']}?query=${encodeURIComponent(query)}`);
+      return new URL(`http://${this.db_config["db_host"]}?query=${encodeURIComponent(query)}`);
     } else {
       return null;
     }
@@ -135,5 +135,5 @@ export class ClientPipeline {
 }
 
 export function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(' ')
+  return classes.filter(Boolean).join(" ");
 }

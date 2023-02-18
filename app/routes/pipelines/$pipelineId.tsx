@@ -61,7 +61,7 @@ export default function PipelineDetailsPage() {
     data.pipeline.name,
     data.pipeline.tables,
     [],
-    undefined, 0, data.unifyDbConfig);
+    data.unifyDbConfig, undefined, 0);
 
   let [columnDefs, setColumnDefs] = React.useState([
     { field: "id" },
