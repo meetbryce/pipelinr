@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../../../app/routes/notes/index.tsx"],
+  "sourcesContent": ["import { Link } from \"@remix-run/react\";\n\nexport default function NoteIndexPage() {\n  return (\n    <p>\n      No note selected. Select a note on the left, or{\" \"}\n      <Link to=\"new\" className=\"text-blue-500 underline\">\n        create a new note.\n      </Link>\n    </p>\n  );\n}\n"],
+  "mappings": ";;;;;;;;;AAMM;AAJS,SAAR,gBAAiC;AACtC,SACE,mDAAC,OAAE;AAAA;AAAA,IAC+C;AAAA,IAChD,mDAAC,QAAK,IAAG,OAAM,WAAU,2BAA0B,kCAAnD;AAAA;AAAA;AAAA;AAAA,WAEA;AAAA,OAJF;AAAA;AAAA;AAAA;AAAA,SAKA;AAEJ;",
+  "names": []
+}
