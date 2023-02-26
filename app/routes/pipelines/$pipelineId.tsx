@@ -8,7 +8,6 @@ import { ClientPipeline, unifyServer } from "~/utils";
 import { deletePipeline, getPipeline } from "~/models/pipeline.server";
 import { requireUserId } from "~/session.server";
 import SmartTable from "~/components/SmartTable";
-import { ColumnEvent } from "ag-grid-community";
 
 type Schema = {
   schema: string,
@@ -74,51 +73,21 @@ export default function PipelineDetailsPage() {
     if (!url) return;
 
     fetch(url, {
-      method: 'GET',
+      method: "GET",
       headers: pipeline.getDbAuthHeaders()
     }).then(response => response.json()).then(processResponse);
 
     function processResponse(res: { data: object[], errors?: object }) {
-      let zerocomp = () => 0;
+      let comparator = () => 0;
       if (res.data.length > 0) {
         let cols: { field: string, comparator: any }[] = [];
         Object.keys(res.data[0]).map((col) => {
-          cols.push({ field: col, comparator: zerocomp });
+          cols.push({ field: col, comparator });
         });
         setColumnDefs(cols);
         setRowData(res.data);
       }
     }
-  };
-
-  const handleColSort = (event: ColumnEvent) => {
-    console.log(event);
-    if (!event.column) return;
-    let dir = event.column.getSort();
-    let desc: number = 0;
-    let sort_col = event.column.getColId();
-    let reload = false;
-    if (dir == null && pipeline.sort_col != null) {
-      pipeline.sort_col = "";
-      console.log("removing sort from ", sort_col);
-      return false;
-    }
-    if (dir == "desc") {
-      desc = 1;
-    }
-    if (pipeline.sort_col != sort_col) {
-      pipeline.sort_col = sort_col;
-      reload = true;
-    }
-    if (pipeline.sort_desc != desc) {
-      pipeline.sort_desc = desc;
-      reload = true;
-    }
-    if (reload) {
-      console.log("new sort ", sort_col, " desc:", desc);
-      setTimeout(reloadData, 0);
-    }
-    return false;
   };
 
   React.useEffect(() => {
@@ -159,9 +128,10 @@ export default function PipelineDetailsPage() {
         </div>
         <div className="w-auto h-[calc(100vh-260px)]">
           <SmartTable
+            entity={pipeline}
             columnDefs={columnDefs}
-            handleColSort={handleColSort}
             rowData={rowData}
+            reloadData={reloadData}
           />
         </div>
         <Form method="post" className="my-4 text-right">

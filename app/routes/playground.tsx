@@ -2,18 +2,19 @@ import Navigation from "~/components/Navigation";
 import * as React from "react";
 import { useRef } from "react";
 import Editor, { type Monaco } from "@monaco-editor/react";
-import { useActionData, useSubmit } from "@remix-run/react";
+import { Form, useActionData, useSubmit } from "@remix-run/react";
 
 import { useUser } from "~/utils";
 import { PlayIcon } from "@heroicons/react/24/outline";
-import { editor } from "monaco-editor";
-import { ActionArgs } from "@remix-run/node";
+import type { editor } from "monaco-editor";
+import { type ActionArgs } from "@remix-run/node";
 import { requireUserId } from "~/session.server";
-import { Form } from "@remix-run/react";
 import { runPlaygroundQuery } from "~/models/playground.server";
+import SmartTable from "~/components/SmartTable";
 
 
-export async function action({ request, params }: ActionArgs) {
+export async function action({ request }: ActionArgs) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const userId = await requireUserId(request);
   const formData = await request.formData();
   const query = formData.get("query") as string;
@@ -22,7 +23,22 @@ export async function action({ request, params }: ActionArgs) {
   // todo: error handling (incl. passing it back to the user)
 
   const result = await runPlaygroundQuery(query);
-  return result;
+
+  const comparator = () => 0;
+
+  let rowData, columnDefs;
+
+  // parse so we return rowData & columnDefs instead
+  if (result.data.length > 0) {
+    let cols: { field: string, comparator: any }[] = [];
+    Object.keys(result.data[0]).map((col) => {
+      cols.push({ field: col, comparator });
+    });
+    columnDefs = cols;
+    rowData = result.data;
+  }
+
+  return { result, rowData, columnDefs };
 }
 
 
@@ -37,7 +53,7 @@ export default function PlaygroundPage() {
   let submit = useSubmit();
   const actionData = useActionData<typeof action>();
 
-  function handleEditorDidMount(editor: editor.IStandaloneCodeEditor, monaco: Monaco) {
+  function handleEditorDidMount(editor: editor.IStandaloneCodeEditor) {
     editorRef.current = editor;
   }
 
@@ -63,7 +79,7 @@ export default function PlaygroundPage() {
             height="50vh"
             defaultLanguage="sql"
             defaultValue="-- Write your Unify SQL query here
-select * from tenant_default.github____org_pulls limit 1"
+select id, number, title, base_repo_name from tenant_default.github____org_pulls limit 1"
             onMount={handleEditorDidMount}
             options={editorOptions}
           />
@@ -87,8 +103,14 @@ select * from tenant_default.github____org_pulls limit 1"
             </Form>
           </div>
         </div>
-
-        <pre className="text-sm"><code>{JSON.stringify(actionData, null, 2)}</code></pre>
+        <div className="mt-4 h-full">
+          {actionData && <SmartTable
+            entity={{}}
+            reloadData={() => console.log("reloading...")}
+            columnDefs={actionData.columnDefs}
+            rowData={actionData.rowData}
+          />}
+        </div>
       </main>
     </div>
   );
