@@ -5,15 +5,15 @@ import {
   Dispatch,
   SetStateAction,
   useCallback,
-  useMemo,
+  useMemo
 } from "react";
 import { LoadingDots } from "@/components/shared/icons";
 import Image from "next/image";
 
 const SignInModal = ({
-  showSignInModal,
-  setShowSignInModal,
-}: {
+                       showSignInModal,
+                       setShowSignInModal
+                     }: {
   showSignInModal: boolean;
   setShowSignInModal: Dispatch<SetStateAction<boolean>>;
 }) => {
@@ -22,7 +22,8 @@ const SignInModal = ({
   return (
     <Modal showModal={showSignInModal} setShowModal={setShowSignInModal}>
       <div className="w-full overflow-hidden shadow-xl md:max-w-md md:rounded-2xl md:border md:border-gray-200">
-        <div className="flex flex-col items-center justify-center space-y-3 border-b border-gray-200 bg-white px-4 py-6 pt-8 text-center md:px-16">
+        <div
+          className="flex flex-col items-center justify-center space-y-3 border-b border-gray-200 bg-white px-4 py-6 pt-8 text-center md:px-16">
           <a href="https://precedent.dev">
             <Image
               src="/logo.png"
@@ -49,7 +50,9 @@ const SignInModal = ({
             } flex h-10 w-full items-center justify-center space-x-3 rounded-md border text-sm shadow-sm transition-all duration-75 focus:outline-none`}
             onClick={() => {
               setSignInClicked(true);
-              signIn("Credentials").then(x => console.log({x}));
+              signIn()
+                .then(x => console.log({ x }))
+                .catch(e => console.log({ e }));
             }}
           >
             {signInClicked ? (
@@ -80,6 +83,6 @@ export function useSignInModal() {
 
   return useMemo(
     () => ({ setShowSignInModal, SignInModal: SignInModalCallback }),
-    [setShowSignInModal, SignInModalCallback],
+    [setShowSignInModal, SignInModalCallback]
   );
 }

@@ -24,7 +24,7 @@ export default function Layout({
   const { SignInModal, setShowSignInModal } = useSignInModal();
   const scrolled = useScroll(50);
 
-  console.log({ session });
+  console.log({ session, status });
 
   const footerText = <small>fixme</small>
 
