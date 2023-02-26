@@ -8,6 +8,8 @@ node_modules
 /cypress/videos
 /prisma/data.db
 /prisma/data.db-journal
+/old-remix/prisma/data.db
+/old-remix/prisma/data.db-journal
 
 /app/styles/tailwind.css
 .DS_Store

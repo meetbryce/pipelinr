@@ -10,6 +10,7 @@
     "start": "next start",
     "prebuild": "prisma generate",
     "predev": "prisma generate",
+    "setup": "prisma generate && prisma migrate deploy && prisma db seed",
     "lint": "next lint"
   },
   "dependencies": {
@@ -23,6 +24,7 @@
     "@types/react-dom": "18.0.10",
     "@vercel/analytics": "^0.1.6",
     "@vercel/og": "^0.0.26",
+    "bcryptjs": "^2.4.3",
     "classnames": "^2.3.2",
     "eslint-config-next": "13.1.1",
     "focus-trap-react": "^10.0.2",
@@ -41,6 +43,7 @@
     "@tailwindcss/forms": "^0.5.3",
     "@tailwindcss/line-clamp": "^0.4.2",
     "@tailwindcss/typography": "^0.5.9",
+    "@types/bcryptjs": "^2.4.2",
     "@types/ms": "^0.7.31",
     "@typescript-eslint/eslint-plugin": "^5.53.0",
     "@typescript-eslint/parser": "^5.53.0",
@@ -53,6 +56,10 @@
     "prettier-plugin-tailwindcss": "^0.2.1",
     "prisma": "^4.8.1",
     "tailwindcss": "^3.2.4",
+    "ts-node": "^10.9.1",
     "typescript": "^4.9.5"
+  },
+  "prisma": {
+    "seed": "ts-node --require tsconfig-paths/register prisma/seed.ts"
   }
 }
