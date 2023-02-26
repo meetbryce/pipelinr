@@ -24,9 +24,11 @@ export default function Layout({
   const { SignInModal, setShowSignInModal } = useSignInModal();
   const scrolled = useScroll(50);
 
-  console.log({ session, status });
-
-  const footerText = <small>fixme</small>
+  const footerText = <small>AskUnify <span style={{
+    "display": "inline-block",
+    "transform": "scaleX(-1)",
+    "filter": "FlipH"
+  }}>&copy;</span><span>&nbsp;2023</span></small>;
 
   return (
     <>
