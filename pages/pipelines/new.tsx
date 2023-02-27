@@ -3,11 +3,20 @@ import { Square3Stack3DIcon as PipelineIcon } from "@heroicons/react/24/outline"
 import React, { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
+import { Pipeline, PrismaClient } from "@prisma/client";
+import { getSession, GetSessionParams } from "next-auth/react";
 
+const prisma = new PrismaClient();
 
-export default function NewPipelinesPage() {
+export async function getServerSideProps(context: GetSessionParams) {
+  const session = await getSession(context);
+  const pipelines = await prisma.pipeline.findMany({ where: { user: { email: { equals: session?.user?.email } } } });
+
+  return { props: { pipelines: JSON.parse(JSON.stringify(pipelines)) } };
+}
+
+export default function NewPipelinesPage({ pipelines }: { pipelines: Pipeline[] }) {
   const [name, setName] = useState("");
-  const actionData: { errors?: { name: string } } = { errors: undefined }; //fixme, unmock
   const router = useRouter();
 
   const submitData = async (e: React.SyntheticEvent) => {
@@ -21,12 +30,13 @@ export default function NewPipelinesPage() {
     }
   };
 
+  const actionData: { errors?: { name: string } } = { errors: undefined }; //fixme, unmock
   const inputColorClasses = actionData?.errors?.name ? // fixme: remix -> next
     "border-red-300 focus:border-red-500 focus:ring-red-500 focus-visible:outline-red-500 placeholder-red-400" :
     "border-gray-300 focus:border-blue-500 focus:ring-blue-500";
 
   return (
-    <PipelinesLayout>
+    <PipelinesLayout pipelines={pipelines}>
       <div className="mx-auto max-w-xl mt-10">
         <div>
           <div className="text-center">

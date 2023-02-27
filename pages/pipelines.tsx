@@ -2,15 +2,24 @@ import React from "react";
 import Link from "next/link";
 import { Square3Stack3DIcon as PipelineIcon } from "@heroicons/react/24/outline";
 import PipelinesLayout from "@/components/layout/PipelinesLayout";
+import { type Pipeline, PrismaClient } from "@prisma/client";
+import { getSession, GetSessionParams } from "next-auth/react";
 
-export default function PipelinesPage() {
-  let pipelineListItems: any[] = []; //fixme: fetch & types
-  pipelineListItems = [{ id: 1, name: "Example Pipeline" }, { id: 2, name: "FAKE Pipeline" }]; //fixme: fetch & types
 
+const prisma = new PrismaClient();
+
+export async function getServerSideProps(context: GetSessionParams) {
+  const session = await getSession(context);
+  const pipelines = await prisma.pipeline.findMany({ where: { user: { email: { equals: session?.user?.email } } } });
+
+  return { props: { pipelines: JSON.parse(JSON.stringify(pipelines)) } };
+}
+
+export default function PipelinesPage({ pipelines }: { pipelines: Pipeline[] }) {
   return (
-    <PipelinesLayout>
+    <PipelinesLayout pipelines={pipelines}>
       <ul role="list" className="my-3 grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
-        {pipelineListItems.map((pipeline) => (
+        {pipelines.map((pipeline) => (
           <li key={pipeline.id}>
             <Link href={`pipelines/${pipeline.id}`} className="col-span-1 flex rounded-md border border-gray-200 shadow-sm transition duration-150
             ease-in-out hover:shadow-md hover:border-gray-300">

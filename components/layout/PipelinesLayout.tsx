@@ -11,20 +11,17 @@ import NavLink from "@/components/shared/NavLink";
 import Layout from "@/components/layout/index";
 import { useSession } from "next-auth/react";
 import AuthenticationRequired from "@/components/shared/AuthenticationRequired";
+import { type Pipeline } from "@prisma/client";
 
-export default function PipelinesLayout({ children }: { children: ReactNode }) {
-  const { data: session, status } = useSession();
+export default function PipelinesLayout({ children, pipelines }: { children: ReactNode, pipelines: Pipeline[] }) {
+  const { status } = useSession();
 
   if (status === "loading") return <p>Loading...</p>;
   if (status === "unauthenticated") return <AuthenticationRequired />;
 
   const inactiveClasses = "flex text-gray-700 hover:bg-gray-100";
   const activeClasses = "flex bg-gray-200 text-gray-900";
-
-  let pipelineListItems: any[] = []; //fixme: fetch & types
-  pipelineListItems = [{ id: 1, name: "Example Pipeline" }, { id: 2, name: "FAKE Pipeline" }]; //fixme: fetch & types
-  // fixme: pass ^^ to <children> to avoid double fetch?
-
+  
   return (
     <Layout>
       <div className="w-full px-6">
@@ -60,7 +57,7 @@ export default function PipelinesLayout({ children }: { children: ReactNode }) {
                     <Menu.Items
                       className="absolute left-0 z-10 mt-2 w-56 origin-top-left divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                       <div className="py-1">
-                        {pipelineListItems.map((pipeline) => (
+                        {pipelines.map((pipeline) => (
                           <NavLink
                             key={pipeline.id}
                             href={`/pipelines/${pipeline.id}`}
@@ -91,7 +88,7 @@ export default function PipelinesLayout({ children }: { children: ReactNode }) {
         </nav>
 
         <main className="flex flex-col h-full">
-          {pipelineListItems.length === 0 && (
+          {pipelines.length === 0 && (
             <div className="flex px-6 space-x-1 md:space-x-3">
               <Link
                 href="new"
