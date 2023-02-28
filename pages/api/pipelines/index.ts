@@ -3,11 +3,8 @@
 // Optional fields in body: TBD
 import { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
+import prisma from "@/lib/prisma";
 
-import { PrismaClient } from "@prisma/client";
-
-
-const prisma = new PrismaClient();
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
   // todo: add support for "duplicate" by allowing creation with full set of Pipeline attributes

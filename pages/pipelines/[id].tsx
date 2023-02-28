@@ -1,13 +1,14 @@
 import PipelinesLayout from "@/components/layout/PipelinesLayout";
-import { Pipeline, PrismaClient } from "@prisma/client";
+import { Pipeline } from "@prisma/client";
 import { getSession } from "next-auth/react";
 import { type GetServerSideProps } from "next";
 import invariant from "tiny-invariant";
 import Link from "next/link";
 import { Schema, unifyServer } from "@/lib/utils";
 import axios from "axios";
+import { useEffect, useState } from "react";
+import prisma from "@/lib/prisma";
 
-const prisma = new PrismaClient();
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getSession(context);
@@ -21,7 +22,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   // fixme: catch the rejection more elegantly
 
   // get the Schemas from Unify
-  const { data: schemas } = await axios.get((unifyServer() + "/v1/schemas?deep=1"));
+  const { data: schemas } = await axios.get(`${unifyServer()}/v1/schemas?deep=1`);
   console.log({ schemas });
 
   return {
@@ -33,8 +34,20 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   };
 };
 
+
 export default function PipelineDetail(props: { pipelines: Pipeline[], schemas: Schema[], self: Pipeline }) {
   const { pipelines, schemas, self } = props;
+  const [queryResponse, setQueryResponse] = useState<any>(); //todo: typings
+
+  const reloadData = async () => {
+    // const result = await axios.get();
+    const result = { todo: "todo" };
+    setQueryResponse(result);
+  };
+
+  useEffect(() => {
+    reloadData().then(() => console.log("reloaded"));
+  }, [self]);
 
   return (
     <PipelinesLayout pipelines={pipelines}>
@@ -45,15 +58,21 @@ export default function PipelineDetail(props: { pipelines: Pipeline[], schemas: 
           {schemas.length === 0 ? (
             <p className="p-2">No schemas defined yet</p>
           ) : (
+            // todo: quick search typeahead
             <table className="table-auto">
               <tbody>
+              <tr className="p-2">
+                <td className={"py-2"}>Pipeline</td>
+                <td className={"px-2 py-2"}><Link href={"#todo"} className="text-blue-500">TODO</Link></td>
+              </tr>
               {schemas.map((schema: Schema) => (
                 schema.tables.map(table => {
-                  const qual = schema.schema + "." + table;
+                  const qualifier = schema.schema + "." + table;
                   return (
-                    <tr key={qual} className="p-2">
-                      <td className={"pl-2 py-2"}>{schema.schema}</td>
-                      <td className={"px-2 py-2"}><Link href={qual} className="text-blue-500">{table}</Link></td>
+                    <tr key={qualifier} className="p-2">
+                      {/* todo: Sentence case \/  */}
+                      <td className={"py-2"}>{schema.schema}</td>
+                      <td className={"px-2 py-2"}><Link href={qualifier} className="text-blue-500">{table}</Link></td>
                     </tr>
                   );
                 })
@@ -68,9 +87,9 @@ export default function PipelineDetail(props: { pipelines: Pipeline[], schemas: 
             <h3 className="ml-2 mt-2 text-lg font-medium leading-6 text-gray-900">{self.name}</h3>
             <p className="ml-2 mt-1 truncate text-sm text-gray-500">Tables: {self.tables}</p>
           </div>
-          <div className="w-auto h-[calc(100vh-260px)]">
+          <div className="w-auto h-[calc(100vh-280px)]">
             <p>TODO: SMART TABLE</p>
-            <pre>{JSON.stringify(self, null, 2)}</pre>
+            <pre>{JSON.stringify({ queryResponse, self }, null, 2)}</pre>
           </div>
           <form method="post" className="my-4 text-right">
             <button
@@ -79,6 +98,7 @@ export default function PipelineDetail(props: { pipelines: Pipeline[], schemas: 
             >
               Delete
             </button>
+            {/* todo: ability to delete a pipeline */}
           </form>
         </div>
         <div>

@@ -2,11 +2,10 @@ import React from "react";
 import Link from "next/link";
 import { Square3Stack3DIcon as PipelineIcon } from "@heroicons/react/24/outline";
 import PipelinesLayout from "@/components/layout/PipelinesLayout";
-import { type Pipeline, PrismaClient } from "@prisma/client";
+import { type Pipeline } from "@prisma/client";
 import { getSession, GetSessionParams } from "next-auth/react";
+import prisma from "@/lib/prisma";
 
-
-const prisma = new PrismaClient();
 
 export async function getServerSideProps(context: GetSessionParams) {
   const session = await getSession(context);
@@ -29,8 +28,7 @@ export default function PipelinesPage({ pipelines }: { pipelines: Pipeline[] }) 
               <div className="flex flex-1 items-center justify-between truncate rounded-r-md bg-white">
                 <div className="flex-1 truncate px-4 py-3 pl-0 text-sm">
                   <p className="font-medium text-gray-900">{pipeline.name}</p>
-                  <p className="text-gray-500">??
-                    Tables</p> {/* todo: pull data about the contents/structure of the pipeline */}
+                  <p className="text-gray-500">Tables: {pipeline.tables || "none"}</p>
                 </div>
               </div>
             </Link>

@@ -3,10 +3,10 @@ import { Square3Stack3DIcon as PipelineIcon } from "@heroicons/react/24/outline"
 import React, { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
-import { Pipeline, PrismaClient } from "@prisma/client";
+import { Pipeline } from "@prisma/client";
 import { getSession, GetSessionParams } from "next-auth/react";
+import prisma from "@/lib/prisma";
 
-const prisma = new PrismaClient();
 
 export async function getServerSideProps(context: GetSessionParams) {
   const session = await getSession(context);
