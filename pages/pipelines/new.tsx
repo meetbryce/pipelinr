@@ -17,6 +17,7 @@ export async function getServerSideProps(context: GetSessionParams) {
 
 export default function NewPipelinesPage({ pipelines }: { pipelines: Pipeline[] }) {
   const [name, setName] = useState("");
+  const [errors, setErrors] = useState<string[]>([]);
   const router = useRouter();
 
   const submitData = async (e: React.SyntheticEvent) => {
@@ -26,12 +27,16 @@ export default function NewPipelinesPage({ pipelines }: { pipelines: Pipeline[] 
       const { data } = await axios.post("/api/pipelines", body);
       await router.push(`/pipelines/${data.id}`); // route the user to their new pipeline's details page
     } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        setErrors([error.response.data.message]);
+      } else {
+        setErrors(["Something went wrong, please try again."]);
+      }
       console.error(error);
     }
   };
 
-  const actionData: { errors?: { name: string } } = { errors: undefined }; //fixme, unmock
-  const inputColorClasses = actionData?.errors?.name ? // fixme: remix -> next
+  const inputColorClasses = errors.length ?
     "border-red-300 focus:border-red-500 focus:ring-red-500 focus-visible:outline-red-500 placeholder-red-400" :
     "border-gray-300 focus:border-blue-500 focus:ring-blue-500";
 
@@ -56,10 +61,8 @@ export default function NewPipelinesPage({ pipelines }: { pipelines: Pipeline[] 
               value={name}
               className={"block w-full px-3 rounded border shadow-sm sm:text-sm " + inputColorClasses}
               placeholder="Enter a name for your pipeline"
-              aria-invalid={actionData?.errors?.name ? true : undefined} // fixme: remix -> next
-              aria-errormessage={
-                actionData?.errors?.name ? "name-error" : undefined // fixme: remix -> next
-              }
+              aria-invalid={errors.length ? true : undefined}
+              aria-errormessage={errors.length ? "error" : undefined}
               required
               autoFocus
             />
@@ -75,9 +78,9 @@ export default function NewPipelinesPage({ pipelines }: { pipelines: Pipeline[] 
         </div>
 
         <div>
-          {actionData?.errors?.name && ( // fixme: remix -> next
-            <div className="mt-2 text-sm text-red-600" id="name-error">
-              {actionData.errors.name[0].toUpperCase() + actionData.errors.name.slice(1) /* quickly uppercase first letter */}
+          {!!errors.length && (
+            <div className="mt-2 text-sm text-red-600" id="error">
+              {errors.map((error, i) => <p key={i}>{error}</p>)}
             </div>
           )}
         </div>

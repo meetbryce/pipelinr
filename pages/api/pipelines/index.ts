@@ -34,7 +34,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
 
   // check request body
   if (!name) {
-    return res.status(400).json({ message: "Missing required field: name" });
+    return res.status(400).json({ message: "A name is required when creating a pipeline." });
   }
 
   // Actually create the record
