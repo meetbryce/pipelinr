@@ -6,7 +6,7 @@ import {
   Square3Stack3DIcon as PipelineIcon
 } from "@heroicons/react/24/outline";
 import { Menu, Transition } from "@headlessui/react";
-import React, { Fragment, ReactNode } from "react";
+import { Fragment, ReactNode } from "react";
 import NavLink from "@/components/shared/NavLink";
 import Layout from "@/components/layout/index";
 import { useSession } from "next-auth/react";
@@ -21,7 +21,7 @@ export default function PipelinesLayout({ children, pipelines }: { children: Rea
 
   const inactiveClasses = "flex text-gray-700 hover:bg-gray-100";
   const activeClasses = "flex bg-gray-200 text-gray-900";
-  
+
   return (
     <Layout>
       <div className="w-full px-6">
