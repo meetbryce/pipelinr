@@ -1,5 +1,4 @@
 import { signIn, useSession } from "next-auth/react";
-import React from "react";
 import NavLink from "@/components/shared/NavLink";
 import { classNames } from "@/lib/utils";
 import Layout from "@/components/layout";

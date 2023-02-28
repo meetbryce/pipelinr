@@ -64,10 +64,8 @@ export default function PipelineDetail(props: { pipelines: Pipeline[], schemas: 
   }, [self, unifyDbConfig]);
 
   const reloadData = async (pipeline: ClientPipeline) => {
-    const url = pipeline.serverUrl;
-    if (!url) return;
-
-    const { data: result } = await axios.get(url, { headers: pipeline.dbAuthHeaders });
+    if (!pipeline.serverUrl) return;
+    const { data: result } = await axios.get(pipeline.serverUrl, { headers: pipeline.dbAuthHeaders });
     setQueryResponse(result);
   };
 
@@ -116,7 +114,8 @@ export default function PipelineDetail(props: { pipelines: Pipeline[], schemas: 
           </div>
           <div className="w-auto h-[calc(100vh-280px)]">
             {/* todo: empty state for Pipelines without any tables yet */}
-            {pipeline && <SmartTable entity={pipeline} responseData={queryResponse} reloadData={() => reloadData(pipeline)} />}
+            {pipeline &&
+              <SmartTable entity={pipeline} responseData={queryResponse} reloadData={() => reloadData(pipeline)} />}
           </div>
           <form method="post" className="my-4 text-right">
             <button
