@@ -65,3 +65,12 @@ export const truncate = (str: string, length: number) => {
 export function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
+
+export type Schema = {
+  schema: string,
+  tables: string[]
+}
+
+export function unifyServer() {
+  return process.env.UNIFY_HOST || "http://127.0.0.1:5000";
+}
