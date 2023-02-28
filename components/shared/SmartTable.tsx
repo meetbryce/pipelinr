@@ -17,7 +17,7 @@ export default function SmartTable(props: { entity: any, responseData: any, relo
     resizable: true
   };
 
-  const processResponse = (res: { data: object[], errors?: object }) => {
+  const processResponse = (res: { data: object[] }) => {
     if (!res) return;
     const comparator = () => 0;
     if (res.data.length > 0) {
@@ -34,26 +34,27 @@ export default function SmartTable(props: { entity: any, responseData: any, relo
     processResponse(responseData);
   }, [responseData]);
 
-  const handleColSort = (event: ColumnEvent, entity: any) => { // todo: no "any"
-    console.log(event);
+  const handleColSort = (event: ColumnEvent, entity: any) => {
     if (!event.column) return;
-    const dir = event.column.getSort();
-    let desc = 0;
+
+    const direction = event.column.getSort();
     const sort_col = event.column.getColId();
+
+    let desc = 0;
     let reload = false;
-    if (dir == null && entity.sort_col != null) {
+
+    if (direction === null && entity.sort_col !== null) {
       entity.sort_col = "";
       console.log("removing sort from ", sort_col);
       return false;
     }
-    if (dir == "desc") {
-      desc = 1;
-    }
-    if (entity.sort_col != sort_col) {
+    if (direction === "desc") desc = 1;
+
+    if (entity.sort_col !== sort_col) {
       entity.sort_col = sort_col;
       reload = true;
     }
-    if (entity.sort_desc != desc) {
+    if (entity.sort_desc !== desc) {
       entity.sort_desc = desc;
       reload = true;
     }

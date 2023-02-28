@@ -115,8 +115,8 @@ export default function PipelineDetail(props: { pipelines: Pipeline[], schemas: 
             <p className="ml-2 mt-1 truncate text-sm text-gray-500">Tables: {self.tables}</p>
           </div>
           <div className="w-auto h-[calc(100vh-280px)]">
-            <SmartTable entity={pipeline} responseData={queryResponse} reloadData={reloadData} />
-            {/*<pre>{JSON.stringify({ queryResponse, self }, null, 2)}</pre>*/}
+            {/* todo: empty state for Pipelines without any tables yet */}
+            {pipeline && <SmartTable entity={pipeline} responseData={queryResponse} reloadData={() => reloadData(pipeline)} />}
           </div>
           <form method="post" className="my-4 text-right">
             <button
