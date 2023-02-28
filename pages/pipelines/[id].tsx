@@ -4,10 +4,11 @@ import { getSession } from "next-auth/react";
 import { type GetServerSideProps } from "next";
 import invariant from "tiny-invariant";
 import Link from "next/link";
-import { Schema, unifyServer } from "@/lib/utils";
+import { Schema, type UnifyDbConfig, unifyServer } from "@/lib/utils";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import prisma from "@/lib/prisma";
+import { ClientPipeline } from "@/lib/clientPipeline";
 
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -18,36 +19,61 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   invariant(typeof context?.params?.id === "string");
   const { params: { id } } = context;
   const self = await prisma.pipeline.findFirstOrThrow({ where: { id, user: whereCurrentUser } });
-
-  // fixme: catch the rejection more elegantly
+  // fixme: catch the rejection more elegantly ↑
 
   // get the Schemas from Unify
   const { data: schemas } = await axios.get(`${unifyServer()}/v1/schemas?deep=1`);
-  console.log({ schemas });
+
+  // this should probably be abstracted to some kind of 'service' (&/or some caching)
+  const { data: unifyDbConfig } = await axios.get<UnifyDbConfig>(unifyServer() + "/v1/dbconf");
 
   return {
     props: {
       pipelines: JSON.parse(JSON.stringify(pipelines)),
       schemas: JSON.parse(JSON.stringify(schemas)),
-      self: JSON.parse(JSON.stringify(self))
+      self: JSON.parse(JSON.stringify(self)),
+      unifyDbConfig: JSON.parse(JSON.stringify(unifyDbConfig))
     }
   };
 };
 
 
-export default function PipelineDetail(props: { pipelines: Pipeline[], schemas: Schema[], self: Pipeline }) {
-  const { pipelines, schemas, self } = props;
+export default function PipelineDetail(props: { pipelines: Pipeline[], schemas: Schema[], self: Pipeline, unifyDbConfig: UnifyDbConfig }) {
+  const { unifyDbConfig, pipelines, schemas, self } = props;
+  const [pipeline, setPipeline] = useState<ClientPipeline>();
   const [queryResponse, setQueryResponse] = useState<any>(); //todo: typings
 
-  const reloadData = async () => {
-    // const result = await axios.get();
-    const result = { todo: "todo" };
+  const instantiateClientPipeline = async (self: Pipeline, unifyDbConfig: UnifyDbConfig) => {
+    const pipeline = new ClientPipeline(
+      {
+        id: self.id,
+        name: self.name,
+        tables: self.tables,
+        operations: [], // todo: use Operations from db
+        db_config: unifyDbConfig,
+        sort_col: undefined,
+        sort_desc: 0
+      });
+
+    setPipeline(pipeline);
+  };
+
+  useEffect(() => {
+    instantiateClientPipeline(self, unifyDbConfig).then(() => console.log("ClientPipeline instantiated"));
+  }, [self, unifyDbConfig]);
+
+  const reloadData = async (pipeline: ClientPipeline) => {
+    const url = pipeline.serverUrl;
+    if (!url) return;
+
+    const result = await axios.get(url, { headers: pipeline.dbAuthHeaders });
     setQueryResponse(result);
   };
 
   useEffect(() => {
-    reloadData().then(() => console.log("reloaded"));
-  }, [self]);
+    if (!pipeline) return;
+    reloadData(pipeline).then(() => console.log("Pipeline reloaded"));
+  }, [pipeline]);
 
   return (
     <PipelinesLayout pipelines={pipelines}>
