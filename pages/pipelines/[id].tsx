@@ -9,6 +9,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import prisma from "@/lib/prisma";
 import { ClientPipeline } from "@/lib/clientPipeline";
+import SmartTable from "@/components/shared/SmartTable";
 
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -66,7 +67,7 @@ export default function PipelineDetail(props: { pipelines: Pipeline[], schemas: 
     const url = pipeline.serverUrl;
     if (!url) return;
 
-    const result = await axios.get(url, { headers: pipeline.dbAuthHeaders });
+    const { data: result } = await axios.get(url, { headers: pipeline.dbAuthHeaders });
     setQueryResponse(result);
   };
 
@@ -114,8 +115,8 @@ export default function PipelineDetail(props: { pipelines: Pipeline[], schemas: 
             <p className="ml-2 mt-1 truncate text-sm text-gray-500">Tables: {self.tables}</p>
           </div>
           <div className="w-auto h-[calc(100vh-280px)]">
-            <p>TODO: SMART TABLE</p>
-            <pre>{JSON.stringify({ queryResponse, self }, null, 2)}</pre>
+            <SmartTable entity={pipeline} responseData={queryResponse} reloadData={reloadData} />
+            {/*<pre>{JSON.stringify({ queryResponse, self }, null, 2)}</pre>*/}
           </div>
           <form method="post" className="my-4 text-right">
             <button
