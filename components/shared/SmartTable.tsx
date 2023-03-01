@@ -50,7 +50,7 @@ export default function SmartTable(props: { entity: any, responseData: any, relo
     }
     if (direction === "desc") desc = 1;
 
-    if (entity.sort_col !== sort_col) {
+    if (entity.sort_col !== sort_col)  {
       entity.sort_col = sort_col;
       reload = true;
     }

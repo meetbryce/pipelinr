@@ -65,6 +65,8 @@ export default function PipelineDetail(props: { pipelines: Pipeline[], schemas: 
 
   const reloadData = async (pipeline: ClientPipeline) => {
     if (!pipeline.serverUrl) return;
+
+    // get the pipeline's table[0] data from Unify
     const { data: result } = await axios.get(pipeline.serverUrl, { headers: pipeline.dbAuthHeaders });
     setQueryResponse(result);
   };
