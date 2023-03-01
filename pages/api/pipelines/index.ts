@@ -11,8 +11,6 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
   // todo: Pipeline typings (leverage prisma)
   const { name } = req.body;
 
-  // fixme: handle if the email address doesn't have an associated User yet!
-
   // Check request method
   if (req.method !== "POST") {
     res.setHeader("Allow", ["POST"]);
@@ -29,14 +27,20 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
     // session = { user: { email: "default@askunify.io" } }; // use for debugging without auth (and switch session to let)
   }
 
+
   // check request body
   if (!name) {
     return res.status(400).json({ message: "A name is required when creating a pipeline." });
   }
 
+  const { email } = session.user;
+
+  // create the User if they don't exist yet
+  await prisma.user.upsert({ where: { email }, update: { email }, create: { email } });
+
   // Actually create the record
   const result = await prisma.pipeline.create({
-    data: { name, user: { connect: { email: session.user?.email } } }
+    data: { name, user: { connect: { email } } }
   });
   return res.json(result);
 }
