@@ -42,32 +42,33 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 export default function PipelineDetail(props: { pipelines: Pipeline[], schemas: Schema[], self: Pipeline, unifyDbConfig: UnifyDbConfig }) {
   const { unifyDbConfig, pipelines, schemas, self } = props;
-  const [pipeline, setPipeline] = useState<ClientPipeline>();
+  const [pipeline, setPipeline] = useState<ClientPipeline>(); // treat `pipeline` as immutable, all changes should be made through re-instantiation
+  const [activeTableIndex, setActiveTableIndex] = useState<number>(0);
   const [queryResponse, setQueryResponse] = useState<any>(); //todo: typings
 
-  const instantiateClientPipeline = async (self: Pipeline, unifyDbConfig: UnifyDbConfig) => {
+  const instantiateClientPipeline = async (self: Pipeline, unifyDbConfig: UnifyDbConfig, activeTableIndex: number) => {
     const pipeline = new ClientPipeline(
       {
         id: self.id,
         name: self.name,
         tables: self.tables,
         operations: [], // todo: use Operations from db
+        activeTableIndex,
         db_config: unifyDbConfig,
         sort_col: undefined,
         sort_desc: 0
       });
-
     setPipeline(pipeline);
   };
 
   useEffect(() => {
-    instantiateClientPipeline(self, unifyDbConfig).then(() => console.log("ClientPipeline instantiated"));
-  }, [self, unifyDbConfig]);
+    instantiateClientPipeline(self, unifyDbConfig, activeTableIndex).then(() => console.log("ClientPipeline instantiated"));
+  }, [self, unifyDbConfig, activeTableIndex]);
 
   const reloadData = async (pipeline: ClientPipeline) => {
     if (!pipeline.serverUrl) return;
 
-    // get the pipeline's table[0] data from Unify
+    // get the pipeline's table[activeTableIndex] data from Unify
     const { data: result } = await axios.get(pipeline.serverUrl, { headers: pipeline.dbAuthHeaders });
     setQueryResponse(result);
   };
@@ -77,9 +78,10 @@ export default function PipelineDetail(props: { pipelines: Pipeline[], schemas: 
     reloadData(pipeline).then(() => console.log("Pipeline reloaded"));
   }, [pipeline]);
 
-  const datasetTabs = (p: ClientPipeline) => {
+
+  const datasetTabs = (p: ClientPipeline, activeTableIndex: number) => {
     const tabs = p.getTableList();
-    const activeTableIndex = p.activeTableIndex;
+    // const activeTableIndex = p.activeTableIndex;
 
     return (
       <div> {/* responsive → https://tailwindui.com/components/application-ui/navigation/tabs#component-de43ff625fee032d234b14989e88422f */}
@@ -89,10 +91,7 @@ export default function PipelineDetail(props: { pipelines: Pipeline[], schemas: 
               <button
                 key={tab}
                 onClick={() => {
-                  p.activeTableIndex = index;
-                  // setPipeline(p);
-                  // fixme: there's some weird state shit going on. probs need to extract into component & add useEffect()
-                  console.log("setting new activeTableIndex", p);
+                  setActiveTableIndex(index);
                 }}
                 className={classNames(
                   activeTableIndex === index
@@ -145,7 +144,7 @@ export default function PipelineDetail(props: { pipelines: Pipeline[], schemas: 
         <div className="overflow-auto w-full">
           <div className="pb-2 -ml-2 -mt-2 flex flex-col items-baseline">
             <h3 className="mt-2 mb-1 ml-2  text-xl font-medium leading-6 text-gray-900">{self.name}</h3>
-            {(pipeline && pipeline.getTableList()) && datasetTabs(pipeline)}
+            {(pipeline && pipeline.getTableList()) && datasetTabs(pipeline, activeTableIndex)}
           </div>
           <div className="w-auto h-[calc(100vh-320px)]">
             {(!pipeline || !pipeline.tables) && (
