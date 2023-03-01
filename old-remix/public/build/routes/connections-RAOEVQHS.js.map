@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../../app/routes/connections.tsx"],
-  "sourcesContent": ["import Navigation from \"~/components/Navigation\";\nimport * as React from \"react\";\nimport { useUser } from \"~/utils\";\n\nexport default function ConnectionsPage() {\n  const user = useUser();\n\n  return (\n    <div className=\"flex h-screen flex-col\">\n      <Navigation user={user} />\n      <main className=\"flex flex-col h-full bg-white\">\n        <h1>Existing connections go here</h1>\n        <hr />\n        <h1>Available connections go here</h1>\n      </main>\n    </div>\n  );\n}"],
-  "mappings": ";;;;;;;;;;;;;;AASM;AALS,SAAR,kBAAmC;AACxC,QAAM,OAAO,QAAQ;AAErB,SACE,mDAAC,SAAI,WAAU,0BACb;AAAA,uDAAC,cAAW,QAAZ;AAAA;AAAA;AAAA;AAAA,WAAwB;AAAA,IACxB,mDAAC,UAAK,WAAU,iCACd;AAAA,yDAAC,QAAG,4CAAJ;AAAA;AAAA;AAAA;AAAA,aAAgC;AAAA,MAChC,mDAAC,UAAD;AAAA;AAAA;AAAA;AAAA,aAAI;AAAA,MACJ,mDAAC,QAAG,6CAAJ;AAAA;AAAA;AAAA;AAAA,aAAiC;AAAA,SAHnC;AAAA;AAAA;AAAA;AAAA,WAIA;AAAA,OANF;AAAA;AAAA;AAAA;AAAA,SAOA;AAEJ;",
-  "names": []
-}

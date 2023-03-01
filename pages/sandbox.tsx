@@ -5,7 +5,7 @@ import Layout from "@/components/layout";
 import AuthenticationRequired from "@/components/shared/AuthenticationRequired";
 
 export default function SandboxPage() {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
 
   if (status === "loading") return <p>Loading...</p>;
   if (status === "unauthenticated") return <AuthenticationRequired />;

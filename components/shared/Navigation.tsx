@@ -8,8 +8,8 @@ export default function Navigation() {
   const { data: session } = useSession();
   const navigationItems = [
     { name: "Pipelines", href: "/pipelines" },
-    { name: "Playground", href: "/playground" },
     { name: "Connections", href: "/connections" },
+    { name: "SQL Playground", href: "/playground" },
     { name: "SANDBOX", href: "/sandbox" }
   ];
 
