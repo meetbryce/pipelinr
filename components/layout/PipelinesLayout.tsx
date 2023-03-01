@@ -88,22 +88,9 @@ export default function PipelinesLayout({ children, pipelines }: { children: Rea
         </nav>
 
         <main className="flex flex-col h-full">
-          {pipelines.length === 0 && (
-            <div className="flex px-6 space-x-1 md:space-x-3">
-              <Link
-                href="new"
-                className="relative block w-full rounded-lg border-2 border-dashed border-gray-300 p-12 text-center hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-              >
-                <PipelineIcon className="mx-auto h-10 w-10 text-gray-400" />
-                <span className="mt-2 font-medium text-gray-900">Create a new Pipeline</span>
-              </Link>
-            </div>
-          )}
-
           <div className="flex-1 px-6 py-4">
             {children}
           </div>
-
         </main>
       </div>
     </Layout>

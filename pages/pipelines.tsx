@@ -16,7 +16,18 @@ export async function getServerSideProps(context: GetSessionParams) {
 export default function PipelinesPage({ pipelines }: { pipelines: Pipeline[] }) {
   return (
     <PipelinesLayout pipelines={pipelines}>
-      <ul role="list" className="my-3 grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
+      {pipelines.length === 0 && (
+        <div className="flex px-6 space-x-1 md:space-x-3">
+          <Link
+            href="/pipelines/new"
+            className="relative block w-full rounded-lg border-2 border-dashed border-gray-300 p-12 text-center hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          >
+            <PipelineIcon className="mx-auto h-10 w-10 text-gray-400" />
+            <span className="mt-2 font-medium text-gray-900">Create a new Pipeline</span>
+          </Link>
+        </div>
+      )}
+      {!!pipelines.length && <ul role="list" className="my-3 grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
         {pipelines.map((pipeline) => (
           <li key={pipeline.id}>
             <Link href={`pipelines/${pipeline.id}`} className="col-span-1 flex rounded-md border border-gray-200 shadow-sm transition duration-150
@@ -33,7 +44,7 @@ export default function PipelinesPage({ pipelines }: { pipelines: Pipeline[] }) 
             </Link>
           </li>
         ))}
-      </ul>
+      </ul>}
       <p className="text-center mt-10">
         Select a pipeline above, or{" "}
         <Link href="pipelines/new" className="text-blue-500 underline hover:text-blue-800">
