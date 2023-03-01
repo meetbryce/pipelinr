@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import prisma from "@/lib/prisma";
 import { ClientPipeline } from "@/lib/clientPipeline";
 import SmartTable from "@/components/shared/SmartTable";
+import { InformationCircleIcon } from "@heroicons/react/24/outline";
 
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -116,7 +117,15 @@ export default function PipelineDetail(props: { pipelines: Pipeline[], schemas: 
           </div>
           <div className="w-auto h-[calc(100vh-280px)]">
             {/* todo: empty state for Pipelines without any tables yet */}
-            {pipeline &&
+            {(!pipeline || !pipeline.tables) && (
+              <div className="flex">
+                <div className="relative block w-full rounded-lg border-2 border-gray-200 px-12 py-16 text-center">
+                  <InformationCircleIcon className="mx-auto h-10 w-10 text-gray-400 mb-1" />
+                  <span className="font-medium text-gray-400">Add a dataset to your pipeline to get started</span>
+                </div>
+              </div>
+            )}
+            {pipeline && pipeline.tables &&
               <SmartTable entity={pipeline} responseData={queryResponse} reloadData={() => reloadData(pipeline)} />}
           </div>
           <form method="post" className="my-4 text-right">
@@ -129,7 +138,7 @@ export default function PipelineDetail(props: { pipelines: Pipeline[], schemas: 
             {/* todo: ability to delete a pipeline */}
           </form>
         </div>
-        <div>
+        <div className='pl-2'>
           <h2 className="font-medium">Operations</h2>
           <hr className="mt-1 mb-2" />
           <div>TODO</div>

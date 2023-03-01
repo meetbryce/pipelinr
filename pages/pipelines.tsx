@@ -10,7 +10,6 @@ import prisma from "@/lib/prisma";
 export async function getServerSideProps(context: GetSessionParams) {
   const session = await getSession(context);
   const pipelines = await prisma.pipeline.findMany({ where: { user: { email: { equals: session?.user?.email } } } });
-
   return { props: { pipelines: JSON.parse(JSON.stringify(pipelines)) } };
 }
 
