@@ -66,6 +66,7 @@ export default function SmartTable(props: { entity: any, responseData: any, relo
   };
 
   const onGridReady = (params: GridColumnsChangedEvent) => {
+    // todo: autoresize all columns to fit content (if < width, maybe size to fit?)
     const columns: Column[] | null = params.columnApi.getColumns();
     if (!columns) return;
     columns.map(column => {

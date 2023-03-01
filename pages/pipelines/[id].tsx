@@ -4,7 +4,7 @@ import { getSession } from "next-auth/react";
 import { type GetServerSideProps } from "next";
 import invariant from "tiny-invariant";
 import Link from "next/link";
-import { Schema, type UnifyDbConfig, unifyServer } from "@/lib/utils";
+import { classNames, Schema, type UnifyDbConfig, unifyServer } from "@/lib/utils";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import prisma from "@/lib/prisma";
@@ -77,6 +77,38 @@ export default function PipelineDetail(props: { pipelines: Pipeline[], schemas: 
     reloadData(pipeline).then(() => console.log("Pipeline reloaded"));
   }, [pipeline]);
 
+  const datasetTabs = (p: ClientPipeline) => {
+    const tabs = p.getTableList();
+    const activeTableIndex = p.activeTableIndex;
+
+    return (
+      <div> {/* responsive → https://tailwindui.com/components/application-ui/navigation/tabs#component-de43ff625fee032d234b14989e88422f */}
+        <div className="border-b border-gray-200">
+          <nav className="-mb-px flex space-x-2" aria-label="Tabs">
+            {tabs.map((tab, index) => (
+              <button
+                key={tab}
+                onClick={() => {
+                  p.activeTableIndex = index;
+                  // setPipeline(p);
+                  // fixme: there's some weird state shit going on. probs need to extract into component & add useEffect()
+                  console.log("setting new activeTableIndex", p);
+                }}
+                className={classNames(
+                  activeTableIndex === index
+                    ? "border-black text-black"
+                    : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
+                  "whitespace-nowrap border-b-2 py-2 px-2 text-sm font-medium"
+                )}
+                aria-current={activeTableIndex === index ? "page" : undefined}
+              >{tab}</button>
+            ))}
+          </nav>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <PipelinesLayout pipelines={pipelines}>
       <div className="flex flex-row h-full">
@@ -111,13 +143,13 @@ export default function PipelineDetail(props: { pipelines: Pipeline[], schemas: 
 
         </div>
         <div className="overflow-auto w-full">
-          <div className="pb-3 -ml-2 -mt-2 flex flex-wrap items-baseline">
-            <h3 className="ml-2 mt-2 text-lg font-medium leading-6 text-gray-900">{self.name}</h3>
-            <p className="ml-2 mt-1 truncate text-sm text-gray-500">Tables: {self.tables}</p>
+          <div className="pb-2 -ml-2 -mt-2 flex flex-col items-baseline">
+            <h3 className="mt-2 mb-1 ml-2  text-xl font-medium leading-6 text-gray-900">{self.name}</h3>
+            {(pipeline && pipeline.getTableList()) && datasetTabs(pipeline)}
           </div>
-          <div className="w-auto h-[calc(100vh-280px)]">
-            {/* todo: empty state for Pipelines without any tables yet */}
+          <div className="w-auto h-[calc(100vh-320px)]">
             {(!pipeline || !pipeline.tables) && (
+              // Empty state for pipelines without any tables added
               <div className="flex">
                 <div className="relative block w-full rounded-lg border-2 border-gray-200 px-12 py-16 text-center">
                   <InformationCircleIcon className="mx-auto h-10 w-10 text-gray-400 mb-1" />
@@ -138,7 +170,7 @@ export default function PipelineDetail(props: { pipelines: Pipeline[], schemas: 
             {/* todo: ability to delete a pipeline */}
           </form>
         </div>
-        <div className='pl-2'>
+        <div className="pl-2">
           <h2 className="font-medium">Operations</h2>
           <hr className="mt-1 mb-2" />
           <div>TODO</div>

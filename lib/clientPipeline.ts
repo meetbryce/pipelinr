@@ -2,6 +2,7 @@ import { type UnifyDbConfig } from "@/lib/utils";
 
 export class ClientPipeline {
   private _query: string;
+  private _activeTableIndex: number;
   public id: string;
   public name: string;
   public tables: string;
@@ -29,10 +30,20 @@ export class ClientPipeline {
     this._query = "";
     this.db_config = params.db_config; //'http://127.0.0.1:8123/'; //?query=SELECT%20%2A%20from%20tenant_default.github____org_repos%20FORMAT%20JSON''
     this.db_config["db_host"] = this.db_config["db_host"].replace("localhost", "127.0.0.1");
+    this._activeTableIndex = 0;
   }
 
   get query(): string {
     return this._query;
+  }
+
+  set activeTableIndex(index: number) {
+    // todo: check index < this.getTableList.length
+    this._activeTableIndex = index;
+  }
+
+  get activeTableIndex() {
+    return this._activeTableIndex;
   }
 
   getTableList() {
