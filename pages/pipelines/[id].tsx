@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import prisma from "@/lib/prisma";
 import { ClientPipeline } from "@/lib/clientPipeline";
 import SmartTable from "@/components/shared/SmartTable";
-import { CheckCircleIcon, InformationCircleIcon } from "@heroicons/react/24/outline";
+import { CheckCircleIcon, InformationCircleIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/router";
 
 export const getServerSideProps: GetServerSideProps = async context => {
@@ -98,30 +98,44 @@ export default function PipelineDetail(props: {
   };
 
   const datasetTabs = (p: ClientPipeline, activeTableIndex: number) => {
-    const tabs = p.getTableList();
-
     return (
       <div>
-        {" "}
         {/* responsive → https://tailwindui.com/components/application-ui/navigation/tabs#component-de43ff625fee032d234b14989e88422f */}
         <div className="border-b border-gray-200">
           <nav className="-mb-px flex space-x-2" aria-label="Tabs">
-            {tabs.map((tab, index) => (
-              <button
+            {p.getTableList().map((tab, index) => (
+              <div
                 key={tab}
-                onClick={() => {
-                  setActiveTableIndex(index);
-                }}
                 className={classNames(
                   activeTableIndex === index
                     ? "border-black text-black"
                     : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
-                  "whitespace-nowrap border-b-2 py-2 px-2 text-sm font-medium",
+                  "border-b-2",
                 )}
-                aria-current={activeTableIndex === index ? "page" : undefined}
               >
-                {tab}
-              </button>
+                <button
+                  onClick={() => {
+                    setActiveTableIndex(index);
+                  }}
+                  className="whitespace-nowrap py-2 px-2 text-sm font-medium"
+                  aria-current={activeTableIndex === index ? "page" : undefined}
+                >
+                  {tab}
+                </button>
+                <button
+                  className="transition ease-in-out hover:text-red-700"
+                  onClick={async () => {
+                    confirm(`Remove ${tab} & associated operations from your pipeline?`);
+                    // todo: use <ConfirmationModal/> instead of confirm() ↑
+                    const tables = p.getTableList();
+                    tables.splice(index, 1);
+                    await axios.patch(`/api/pipelines/${p.id}`, { tables: tables.join(",") });
+                    await router.replace(router.asPath);
+                  }}
+                >
+                  <XMarkIcon className="-ml-0.5 mr-1.5 inline-block h-4 w-4" />
+                </button>
+              </div>
             ))}
           </nav>
         </div>
