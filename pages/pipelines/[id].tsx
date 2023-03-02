@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import prisma from "@/lib/prisma";
 import { ClientPipeline } from "@/lib/clientPipeline";
 import SmartTable from "@/components/shared/SmartTable";
-import { InformationCircleIcon } from "@heroicons/react/24/outline";
+import { CheckCircleIcon, InformationCircleIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/router";
 
 
@@ -88,7 +88,7 @@ export default function PipelineDetail(props: { pipelines: Pipeline[], schemas: 
     tables.push(qualifier);
     await axios.patch(`/api/pipelines/${pipeline.id}`, { tables: tables.join(",") });
     // todo: error handling
-    await router.replace(router.asPath)
+    await router.replace(router.asPath);
   };
 
   const datasetTabs = (p: ClientPipeline, activeTableIndex: number) => {
@@ -119,6 +119,8 @@ export default function PipelineDetail(props: { pipelines: Pipeline[], schemas: 
     );
   };
 
+  if (!pipeline) return;
+
   return (
     <PipelinesLayout pipelines={pipelines}>
       <div className="flex flex-row h-full">
@@ -133,20 +135,32 @@ export default function PipelineDetail(props: { pipelines: Pipeline[], schemas: 
             <table className="table-auto">
               <tbody>
               <tr className="p-2">
-                <td className={"py-2"}>Pipeline</td>
+                <td className="py-2 pl-2">Pipeline</td>
                 {/* todo: list other pipelines */}
-                <td className={"px-2 py-2"}><Link href={"#todo"} className="text-blue-500">TODO</Link></td>
+                <td className="p-2"><Link href={"#todo"} className="text-blue-500">TODO</Link></td>
               </tr>
               {schemas.map((schema: Schema) => (
                 schema.tables.map(table => {
-                  // todo: indicate datasets that are already in the pipeline
+                  // todo: indicate datasets that are already in the pipeline (can you add a dataset twice?)
                   const qualifier = `${schema.schema}.${table}`;
+                  const isAdded = pipeline.tables.indexOf(qualifier) > 0;
+                  if (isAdded) {
+                    return (
+                      <tr key={qualifier} className="p-2 text-gray-500">
+                        <td className="py-2 pl-2">{schema.schema}</td>
+                        <td className="p-2">{table}</td>
+                        <td><CheckCircleIcon className="h6 w-6 py-2 pl-1.5 text-green-600" /></td>
+                      </tr>
+                    );
+                  }
+
                   return (
                     <tr key={qualifier} onClick={() => handleDatasetSelection(qualifier)}
                         className="p-2 cursor-pointer hover:bg-blue-100 transition ease-in-out">
                       {/* todo: Sentence case \/  */}
-                      <td className={"py-2"}>{schema.schema}</td>
-                      <td className={"px-2 py-2 text-blue-500"}>{table}</td>
+                      <td className="py-2 pl-2 rounded-l">{schema.schema}</td>
+                      <td className="p-2 text-blue-500">{table}</td>
+                      <td className="rounded-r"></td>
                     </tr>
                   );
                 })
@@ -162,7 +176,7 @@ export default function PipelineDetail(props: { pipelines: Pipeline[], schemas: 
             {(pipeline && pipeline.getTableList()) && datasetTabs(pipeline, activeTableIndex)}
           </div>
           <div className="w-auto h-[calc(100vh-320px)]">
-            {(!pipeline || !pipeline.tables) && (
+            {!pipeline.tables && (
               // Empty state for pipelines without any tables added
               <div className="flex">
                 <div className="relative block w-full rounded-lg border-2 border-gray-200 px-12 py-16 text-center">
@@ -171,7 +185,7 @@ export default function PipelineDetail(props: { pipelines: Pipeline[], schemas: 
                 </div>
               </div>
             )}
-            {pipeline && pipeline.tables &&
+            {pipeline.tables &&
               <SmartTable entity={pipeline} responseData={queryResponse} reloadData={() => reloadData(pipeline)} />}
           </div>
           <form method="post" className="my-4 text-right">
