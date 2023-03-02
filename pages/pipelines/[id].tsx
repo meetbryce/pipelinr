@@ -11,6 +11,7 @@ import prisma from "@/lib/prisma";
 import { ClientPipeline } from "@/lib/clientPipeline";
 import SmartTable from "@/components/shared/SmartTable";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
+import { useRouter } from "next/router";
 
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -41,6 +42,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 
 export default function PipelineDetail(props: { pipelines: Pipeline[], schemas: Schema[], self: Pipeline, unifyDbConfig: UnifyDbConfig }) {
+  const router = useRouter();
   const { unifyDbConfig, pipelines, schemas, self } = props;
   const [pipeline, setPipeline] = useState<ClientPipeline>(); // treat `pipeline` as immutable, all changes should be made through re-instantiation
   const [activeTableIndex, setActiveTableIndex] = useState<number>(0);
@@ -78,10 +80,19 @@ export default function PipelineDetail(props: { pipelines: Pipeline[], schemas: 
     reloadData(pipeline).then(() => console.log("Pipeline reloaded"));
   }, [pipeline]);
 
+  const handleDatasetSelection = async (qualifier: string) => {
+    if (!pipeline) return;
+
+    // get the current tables, append `qualifier`, PATCH it up
+    const tables = pipeline?.getTableList() || [];
+    tables.push(qualifier);
+    await axios.patch(`/api/pipelines/${pipeline.id}`, { tables: tables.join(",") });
+    // todo: error handling
+    await router.replace(router.asPath)
+  };
 
   const datasetTabs = (p: ClientPipeline, activeTableIndex: number) => {
     const tabs = p.getTableList();
-    // const activeTableIndex = p.activeTableIndex;
 
     return (
       <div> {/* responsive → https://tailwindui.com/components/application-ui/navigation/tabs#component-de43ff625fee032d234b14989e88422f */}
@@ -116,22 +127,26 @@ export default function PipelineDetail(props: { pipelines: Pipeline[], schemas: 
           <hr className="mt-1 mb-2" />
           {schemas.length === 0 ? (
             <p className="p-2">No schemas defined yet</p>
+            // todo: ↑ provide CTA to create connections &/or pull data
           ) : (
             // todo: quick search typeahead
             <table className="table-auto">
               <tbody>
               <tr className="p-2">
                 <td className={"py-2"}>Pipeline</td>
+                {/* todo: list other pipelines */}
                 <td className={"px-2 py-2"}><Link href={"#todo"} className="text-blue-500">TODO</Link></td>
               </tr>
               {schemas.map((schema: Schema) => (
                 schema.tables.map(table => {
-                  const qualifier = schema.schema + "." + table;
+                  // todo: indicate datasets that are already in the pipeline
+                  const qualifier = `${schema.schema}.${table}`;
                   return (
-                    <tr key={qualifier} className="p-2">
+                    <tr key={qualifier} onClick={() => handleDatasetSelection(qualifier)}
+                        className="p-2 cursor-pointer hover:bg-blue-100 transition ease-in-out">
                       {/* todo: Sentence case \/  */}
                       <td className={"py-2"}>{schema.schema}</td>
-                      <td className={"px-2 py-2"}><Link href={qualifier} className="text-blue-500">{table}</Link></td>
+                      <td className={"px-2 py-2 text-blue-500"}>{table}</td>
                     </tr>
                   );
                 })

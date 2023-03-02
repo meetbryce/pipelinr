@@ -8,7 +8,7 @@ import prisma from "@/lib/prisma";
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
   // todo: add support for "duplicate" by allowing creation with full set of Pipeline attributes
-  // todo: Pipeline typings (leverage prisma)
+  // todo: Pipeline typings (leverage prisma) https://www.prisma.io/docs/concepts/components/prisma-client/advanced-type-safety/prisma-validator
   const { name } = req.body;
 
   // Check request method
@@ -17,14 +17,13 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
     return res
       .status(405)
       .json({ message: `HTTP method ${req.method} is not supported.` });
-
   }
 
   // Check request auth
   const session = await getSession({ req });
   if (!session || !session?.user?.email) {
-    return res.status(401).send({ message: "Unauthorized" });
     // session = { user: { email: "default@askunify.io" } }; // use for debugging without auth (and switch session to let)
+    return res.status(401).send({ message: "Unauthorized" });
   }
 
 
