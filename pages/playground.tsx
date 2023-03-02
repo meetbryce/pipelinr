@@ -2,7 +2,7 @@ import { useSession } from "next-auth/react";
 import Layout from "@/components/layout";
 import AuthenticationRequired from "@/components/shared/AuthenticationRequired";
 import Editor from "@monaco-editor/react";
-import type { OnMount } from '@monaco-editor/react'
+import type { OnMount } from "@monaco-editor/react";
 import { type FormEvent, useRef, useState } from "react";
 import { PlayIcon } from "@heroicons/react/24/outline";
 import SmartTable from "@/components/shared/SmartTable";
@@ -16,13 +16,13 @@ export default function PlaygroundPage() {
   const editorOptions = {
     fontSize: 15,
     fontLigatures: true,
-    minimap: { enabled: false }
+    minimap: { enabled: false },
   };
 
   if (status === "loading") return <p>Loading...</p>;
   if (status === "unauthenticated") return <AuthenticationRequired />;
 
-  const handleEditorDidMount: OnMount = (editor) => {
+  const handleEditorDidMount: OnMount = editor => {
     editorRef.current = editor;
   };
 
@@ -49,7 +49,7 @@ export default function PlaygroundPage() {
 
   return (
     <Layout>
-      <div className="w-full h-full px-6">
+      <div className="h-full w-full px-6">
         <div className="-mx-5">
           <Editor
             height="50vh"
@@ -68,22 +68,26 @@ export default function PlaygroundPage() {
             <form onSubmit={handleSubmit} method="post">
               <button
                 type="submit"
-                className="group inline-flex items-center rounded-full border border-gray-300 bg-white px-4 py-1.5 text-sm font-medium leading-5 text-gray-700 shadow-sm hover:bg-green-50 hover:text-green-800 hover:border-green-700 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-offset-2 transition duration-50 ease-in-out"
+                className="duration-50 group inline-flex items-center rounded-full border border-gray-300 bg-white px-4 py-1.5 text-sm font-medium leading-5 text-gray-700 shadow-sm transition ease-in-out hover:border-green-700 hover:bg-green-50 hover:text-green-800 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-offset-2"
               >
-                <PlayIcon className="-ml-1.5 mr-1 h-5 w-5 text-gray-400 group-hover:text-green-800"
-                          aria-hidden="true" />
+                <PlayIcon
+                  className="-ml-1.5 mr-1 h-5 w-5 text-gray-400 group-hover:text-green-800"
+                  aria-hidden="true"
+                />
                 <span>Run Query</span>
               </button>
             </form>
           </div>
         </div>
         <div className="mt-4 h-full">
-          {queryError && <div className="py-4 text-sm"><code className={"text-red-700"}>{queryError}</code></div>}
-          {responseData && <SmartTable
-            entity={{}}
-            reloadData={() => console.log("reloading...")}
-            responseData={responseData}
-          />}
+          {queryError && (
+            <div className="py-4 text-sm">
+              <code className={"text-red-700"}>{queryError}</code>
+            </div>
+          )}
+          {responseData && (
+            <SmartTable entity={{}} reloadData={() => console.log("reloading...")} responseData={responseData} />
+          )}
         </div>
       </div>
     </Layout>

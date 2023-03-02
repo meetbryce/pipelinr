@@ -4,7 +4,7 @@ import { type LinkProps } from "next/dist/client/link";
 import React from "react";
 
 type ClassNameFunction = (isActive: boolean) => string;
-type NavLinkProps = LinkProps & { exact?: boolean, children: React.ReactNode, className: string | ClassNameFunction }
+type NavLinkProps = LinkProps & { exact?: boolean; children: React.ReactNode; className: string | ClassNameFunction };
 
 /**
  * Superset component for Link that provides convenient helpers for styling active links.

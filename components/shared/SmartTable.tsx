@@ -7,14 +7,15 @@ import type { ColDef } from "ag-grid-community/dist/lib/entities/colDef";
 import type { RowNode } from "ag-grid-community/dist/lib/entities/rowNode";
 import { useEffect, useState } from "react";
 
-export default function SmartTable(props: { entity: any, responseData: any, reloadData: any }) { // fixme: non any types
+export default function SmartTable(props: { entity: any; responseData: any; reloadData: any }) {
+  // fixme: non any types
   const { entity, responseData, reloadData } = props;
   const [columnDefs, setColumnDefs] = useState<ColDef[] | undefined>(); // todo: types
   const [rowData, setRowData] = useState<RowNode[] | undefined>(); // todo: types
 
   const defaultColDef: ColDef = {
     sortable: true,
-    resizable: true
+    resizable: true,
   };
 
   const processResponse = (res: { data: object[] }) => {
@@ -22,7 +23,7 @@ export default function SmartTable(props: { entity: any, responseData: any, relo
     const comparator = () => 0;
     if (res.data.length > 0) {
       const cols: ColDef[] = [];
-      Object.keys(res.data[0]).map((col) => {
+      Object.keys(res.data[0]).map(col => {
         cols.push({ field: col, comparator });
       });
       setColumnDefs(cols);
@@ -50,7 +51,7 @@ export default function SmartTable(props: { entity: any, responseData: any, relo
     }
     if (direction === "desc") desc = 1;
 
-    if (entity.sort_col !== sort_col)  {
+    if (entity.sort_col !== sort_col) {
       entity.sort_col = sort_col;
       reload = true;
     }
@@ -82,8 +83,7 @@ export default function SmartTable(props: { entity: any, responseData: any, relo
         columnDefs={columnDefs}
         defaultColDef={defaultColDef}
         onGridColumnsChanged={onGridReady}
-      >
-      </AgGridReact>
+      ></AgGridReact>
     </div>
   );
 }

@@ -53,9 +53,7 @@ export default function Tooltip({
               <TooltipPrimitive.Arrow className="fill-current text-white" />
               {typeof content === "string" ? (
                 <div className="p-5">
-                  <span className="block max-w-xs text-center text-sm text-gray-700">
-                    {content}
-                  </span>
+                  <span className="block max-w-xs text-center text-sm text-gray-700">{content}</span>
                 </div>
               ) : (
                 content

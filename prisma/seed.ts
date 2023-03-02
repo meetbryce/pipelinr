@@ -16,15 +16,15 @@ async function seed() {
     update: {},
     create: {
       email,
-      password: hashedPassword
-    }
+      password: hashedPassword,
+    },
   });
 
   console.log(`Database has been seeded. 🌱`);
 }
 
 seed()
-  .catch((e) => {
+  .catch(e => {
     console.error(e);
     process.exit(1);
   })

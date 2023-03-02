@@ -8,10 +8,11 @@ export default function ConnectionsPage() {
   if (status === "loading") return <p>Loading...</p>;
   if (status === "unauthenticated") return <AuthenticationRequired />;
 
-
   return (
     <Layout>
-      <div className="w-full px-6"><p>COMING SOON: Manage connections to data sources here.</p></div>
+      <div className="w-full px-6">
+        <p>COMING SOON: Manage connections to data sources here.</p>
+      </div>
     </Layout>
   );
 }

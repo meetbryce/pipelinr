@@ -7,7 +7,6 @@ import { Pipeline } from "@prisma/client";
 import { getSession, GetSessionParams } from "next-auth/react";
 import prisma from "@/lib/prisma";
 
-
 export async function getServerSideProps(context: GetSessionParams) {
   const session = await getSession(context);
   const pipelines = await prisma.pipeline.findMany({ where: { user: { email: { equals: session?.user?.email } } } });
@@ -36,13 +35,13 @@ export default function NewPipelinesPage({ pipelines }: { pipelines: Pipeline[] 
     }
   };
 
-  const inputColorClasses = errors.length ?
-    "border-red-300 focus:border-red-500 focus:ring-red-500 focus-visible:outline-red-500 placeholder-red-400" :
-    "border-gray-300 focus:border-blue-500 focus:ring-blue-500";
+  const inputColorClasses = errors.length
+    ? "border-red-300 focus:border-red-500 focus:ring-red-500 focus-visible:outline-red-500 placeholder-red-400"
+    : "border-gray-300 focus:border-blue-500 focus:ring-blue-500";
 
   return (
     <PipelinesLayout pipelines={pipelines}>
-      <div className="mx-auto max-w-xl mt-10">
+      <div className="mx-auto mt-10 max-w-xl">
         <div>
           <div className="text-center">
             <PipelineIcon className="mx-auto h-10 w-10 text-gray-400" />
@@ -57,9 +56,9 @@ export default function NewPipelinesPage({ pipelines }: { pipelines: Pipeline[] 
             </label>
             <input
               name={"name"}
-              onChange={(e) => setName(e.target.value)}
+              onChange={e => setName(e.target.value)}
               value={name}
-              className={"block w-full px-3 rounded border shadow-sm sm:text-sm " + inputColorClasses}
+              className={"block w-full rounded border px-3 shadow-sm sm:text-sm " + inputColorClasses}
               placeholder="Enter a name for your pipeline"
               aria-invalid={errors.length ? true : undefined}
               aria-errormessage={errors.length ? "error" : undefined}
@@ -80,7 +79,9 @@ export default function NewPipelinesPage({ pipelines }: { pipelines: Pipeline[] 
         <div>
           {!!errors.length && (
             <div className="mt-2 text-sm text-red-600" id="error">
-              {errors.map((error, i) => <p key={i}>{error}</p>)}
+              {errors.map((error, i) => (
+                <p key={i}>{error}</p>
+              ))}
             </div>
           )}
         </div>

@@ -6,9 +6,7 @@ export const config = {
   runtime: "experimental-edge",
 };
 
-const sfPro = fetch(
-  new URL("../../styles/SF-Pro-Display-Medium.otf", import.meta.url),
-).then((res) => res.arrayBuffer());
+const sfPro = fetch(new URL("../../styles/SF-Pro-Display-Medium.otf", import.meta.url)).then(res => res.arrayBuffer());
 
 export default async function handler(req: NextRequest) {
   const [sfProData] = await Promise.all([sfPro]);
@@ -27,8 +25,7 @@ export default async function handler(req: NextRequest) {
           alignItems: "center",
           justifyContent: "center",
           backgroundColor: "white",
-          backgroundImage:
-            "linear-gradient(to bottom right, #E0E7FF 25%, #ffffff 50%, #CFFAFE 75%)",
+          backgroundImage: "linear-gradient(to bottom right, #E0E7FF 25%, #ffffff 50%, #CFFAFE 75%)",
         }}
       >
         <img
@@ -40,8 +37,7 @@ export default async function handler(req: NextRequest) {
           style={{
             fontSize: "100px",
             fontFamily: "SF Pro",
-            background:
-              "linear-gradient(to bottom right, #000000 21.66%, #78716c 86.47%)",
+            background: "linear-gradient(to bottom right, #000000 21.66%, #78716c 86.47%)",
             backgroundClip: "text",
             color: "transparent",
             lineHeight: "5rem",

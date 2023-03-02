@@ -14,10 +14,7 @@ export default function UserDropdown() {
   if (!email) return null;
 
   return (
-    <motion.div
-      className="relative inline-block text-left"
-      {...FADE_IN_ANIMATION_SETTINGS}
-    >
+    <motion.div className="relative inline-block text-left" {...FADE_IN_ANIMATION_SETTINGS}>
       <Popover
         content={
           <div className="w-full rounded-md bg-white p-2 sm:w-56">

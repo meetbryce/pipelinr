@@ -20,9 +20,7 @@ export default function Popover({
   return (
     <>
       {isMobile && children}
-      {openPopover && isMobile && (
-        <Leaflet setShow={setOpenPopover}>{content}</Leaflet>
-      )}
+      {openPopover && isMobile && <Leaflet setShow={setOpenPopover}>{content}</Leaflet>}
       {isDesktop && (
         <PopoverPrimitive.Root>
           <PopoverPrimitive.Trigger className="inline-flex" asChild>

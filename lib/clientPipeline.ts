@@ -11,9 +11,16 @@ export class ClientPipeline {
   public sort_col?: string;
   public sort_desc?: number;
 
-  constructor(
-    params: { id: string, name: string, tables: string, operations: [], activeTableIndex: number, db_config: UnifyDbConfig, sort_col?: string, sort_desc?: number }
-  ) {
+  constructor(params: {
+    id: string;
+    name: string;
+    tables: string;
+    operations: [];
+    activeTableIndex: number;
+    db_config: UnifyDbConfig;
+    sort_col?: string;
+    sort_desc?: number;
+  }) {
     this.sort_desc = params.sort_desc;
     this.sort_col = params.sort_col;
     this.db_config = params.db_config;
@@ -47,7 +54,7 @@ export class ClientPipeline {
 
   get dbAuthHeaders() {
     return {
-      Authorization: `Basic ${btoa(this.db_config["db_user"] + ":" + this.db_config["db_password"])}`
+      Authorization: `Basic ${btoa(this.db_config["db_user"] + ":" + this.db_config["db_password"])}`,
     };
   }
 
@@ -62,7 +69,10 @@ export class ClientPipeline {
         }
       }
       const query = `SELECT *
-                     FROM tenant_default.${tables[this.activeTableIndex].replace(".", "____")} ${sort} LIMIT 1000 FORMAT JSON`;
+                     FROM tenant_default.${tables[this.activeTableIndex].replace(
+                       ".",
+                       "____",
+                     )} ${sort} LIMIT 1000 FORMAT JSON`;
       this._query = query;
       return `http://${this.db_config["db_host"]}?query=${encodeURIComponent(query)}`;
     } else {

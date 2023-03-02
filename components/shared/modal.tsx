@@ -1,10 +1,4 @@
-import {
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useRef,
-} from "react";
+import { Dispatch, SetStateAction, useCallback, useEffect, useRef } from "react";
 import FocusTrap from "focus-trap-react";
 import { AnimatePresence, motion } from "framer-motion";
 import Leaflet from "./leaflet";
@@ -52,7 +46,7 @@ export default function Modal({
                   initial={{ scale: 0.95 }}
                   animate={{ scale: 1 }}
                   exit={{ scale: 0.95 }}
-                  onMouseDown={(e) => {
+                  onMouseDown={e => {
                     if (desktopModalRef.current === e.target) {
                       setShowModal(false);
                     }

@@ -10,7 +10,7 @@ export default function Navigation() {
     { name: "Pipelines", href: "/pipelines" },
     { name: "Connections", href: "/connections" },
     { name: "SQL Playground", href: "/playground" },
-    { name: "SANDBOX", href: "/sandbox" }
+    { name: "SANDBOX", href: "/sandbox" },
   ];
 
   return (
@@ -22,35 +22,60 @@ export default function Navigation() {
       </div>
       <ul className="flex md:space-x-3">
         <li className="h-full">
-          <NavLink href={"/"} exact={true}
-                   className={(isActive) => classNames(isActive ? "bg-gray-900 text-white" : "text-gray-300 hover:bg-gray-700 hover:text-white", "px-3 py-2 rounded-md text-sm font-medium")}>Home</NavLink>
+          <NavLink
+            href={"/"}
+            exact={true}
+            className={isActive =>
+              classNames(
+                isActive ? "bg-gray-900 text-white" : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                "rounded-md px-3 py-2 text-sm font-medium",
+              )
+            }
+          >
+            Home
+          </NavLink>
         </li>
-        {navigationItems.map(item =>
+        {navigationItems.map(item => (
           <li className="h-full" key={item.href}>
-            <NavLink href={item.href}
-                     className={(isActive) => classNames(isActive ? "bg-gray-900 text-white" : "text-gray-300 hover:bg-gray-700 hover:text-white", "px-3 py-2 rounded-md text-sm font-medium")}>{item.name}</NavLink>
+            <NavLink
+              href={item.href}
+              className={isActive =>
+                classNames(
+                  isActive ? "bg-gray-900 text-white" : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                  "rounded-md px-3 py-2 text-sm font-medium",
+                )
+              }
+            >
+              {item.name}
+            </NavLink>
           </li>
-        )}
+        ))}
       </ul>
-      {session && <div className="flex space-x-6">
-        <button className="text-sm" disabled>{session?.user?.email}</button>
-        <button
-          type="submit"
-          className="rounded bg-slate-600 py-2 px-4 text-blue-100 text-sm hover:bg-blue-500 active:bg-blue-600"
-          onClick={() => signOut()}
-        >
-          Logout
-        </button>
-      </div>}
-      {!session && <div className="flex space-x-6">
-        <button
-          type="submit"
-          className="rounded bg-slate-600 py-2 px-4 text-blue-100 text-sm hover:bg-blue-500 active:bg-blue-600"
-          onClick={() => signIn()}
-        >
-          Log in
-        </button>
-      </div>}
+      {session && (
+        <div className="flex space-x-6">
+          <button className="text-sm" disabled>
+            {session?.user?.email}
+          </button>
+          <button
+            type="submit"
+            className="rounded bg-slate-600 py-2 px-4 text-sm text-blue-100 hover:bg-blue-500 active:bg-blue-600"
+            onClick={() => signOut()}
+          >
+            Logout
+          </button>
+        </div>
+      )}
+      {!session && (
+        <div className="flex space-x-6">
+          <button
+            type="submit"
+            className="rounded bg-slate-600 py-2 px-4 text-sm text-blue-100 hover:bg-blue-500 active:bg-blue-600"
+            onClick={() => signIn()}
+          >
+            Log in
+          </button>
+        </div>
+      )}
     </header>
   );
 }

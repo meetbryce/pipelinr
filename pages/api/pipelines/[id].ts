@@ -6,7 +6,6 @@ import { getSession } from "next-auth/react";
 import prisma from "@/lib/prisma";
 import invariant from "tiny-invariant";
 
-
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
   // todo: Pipeline typings (leverage prisma)
   const { id } = req.query;
@@ -18,9 +17,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
   // Check request method
   if (req.method !== "PATCH") {
     res.setHeader("Allow", ["POST", "PATCH"]);
-    return res
-      .status(405)
-      .json({ message: `HTTP method ${req.method} is not supported.` });
+    return res.status(405).json({ message: `HTTP method ${req.method} is not supported.` });
   }
 
   // Check request auth
@@ -33,7 +30,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
   // Retrieve the authenticated user
   const user = await prisma.user.findUnique({
     where: { email: session.user.email },
-    select: { pipelines: true }
+    select: { pipelines: true },
   });
 
   // Check if the user owns the Pipeline (& that it exists)

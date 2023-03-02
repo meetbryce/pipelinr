@@ -12,10 +12,11 @@ export const authOptions: NextAuthOptions = {
       name: "email",
       type: "credentials",
       credentials: {
-        email: { label: "Email", type: "email", placeholder: "yourname@gmail.com" }
+        email: { label: "Email", type: "email", placeholder: "yourname@gmail.com" },
         // password: { label: "Password", type: "password" }
       },
-      async authorize(credentials: any, req: any) { // todo: fix typings, Pick<RequestInternal, "body" | "query" | "headers" | "method">
+      async authorize(credentials: any, req: any) {
+        // todo: fix typings, Pick<RequestInternal, "body" | "query" | "headers" | "method">
         /*
         const res = await fetch("https://mocki.io/v1/aff0eb4c-8fa4-471a-a615-83aae911e1ce", { // fixme: fake auth endpoint
           method: "POST", // fixme: change back to POST
@@ -24,7 +25,7 @@ export const authOptions: NextAuthOptions = {
         });
         const user = await res.json();
         */
-        const res ={ ok: true };
+        const res = { ok: true };
         const user = { id: "0", email: credentials.email };
 
         // If no error and we have user data, return it
@@ -33,9 +34,9 @@ export const authOptions: NextAuthOptions = {
         }
         // Return null if user data could not be retrieved
         return null;
-      }
-    })
-  ]
+      },
+    }),
+  ],
 };
 
 export default NextAuth(authOptions);

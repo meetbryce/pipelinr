@@ -4,9 +4,9 @@ import Meta from "./meta";
 import Navigation from "@/components/shared/Navigation";
 
 export default function Layout({
-                                 meta,
-                                 children
-                               }: {
+  meta,
+  children,
+}: {
   meta?: {
     title?: string;
     description?: string;
@@ -20,8 +20,7 @@ export default function Layout({
     <>
       <Meta {...meta} />
       <Navigation />
-      <main
-        className="flex w-full h-[calc(100vh-68px)] flex-col items-center py-6 bg-gradient-to-br from-indigo-50 via-white">
+      <main className="flex h-[calc(100vh-68px)] w-full flex-col items-center bg-gradient-to-br from-indigo-50 via-white py-6">
         {children}
 
         {/*<div className="w-full border-t border-gray-200 py-5 text-center">
