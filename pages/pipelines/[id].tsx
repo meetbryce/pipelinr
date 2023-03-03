@@ -171,7 +171,7 @@ export default function PipelineDetail(props: {
                   schema.tables.map(table => {
                     // todo: indicate datasets that are already in the pipeline (can you add a dataset twice?)
                     const qualifier = `${schema.schema}.${table}`;
-                    const isAdded = pipeline.tables.indexOf(qualifier) > 0;
+                    const isAdded = pipeline?.getTableList().indexOf(qualifier) >= 0;
                     if (isAdded) {
                       return (
                         <tr key={qualifier} className="p-2 text-gray-500">
