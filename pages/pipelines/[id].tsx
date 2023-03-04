@@ -3,16 +3,16 @@ import { Pipeline } from "@prisma/client";
 import { getSession } from "next-auth/react";
 import { type GetServerSideProps } from "next";
 import invariant from "tiny-invariant";
-import Link from "next/link";
 import { Schema, type UnifyDbConfig, unifyServer } from "@/lib/utils";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import prisma from "@/lib/prisma";
 import { ClientPipeline } from "@/lib/clientPipeline";
 import SmartTable from "@/components/shared/SmartTable";
-import { CheckCircleIcon, InformationCircleIcon } from "@heroicons/react/24/outline";
+import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/router";
 import PipelineTabs from "@/components/pipelines/PipelineTabs";
+import DatasetSidebar from "@/components/pipelines/DatasetSidebar";
 
 export const getServerSideProps: GetServerSideProps = async context => {
   const session = await getSession(context);
@@ -87,76 +87,12 @@ export default function PipelineDetail(props: {
     reloadData(pipeline).then(() => console.log("Pipeline reloaded"));
   }, [pipeline]);
 
-  const handleDatasetSelection = async (qualifier: string) => {
-    if (!pipeline) return;
-
-    // get the current tables, append `qualifier`, PATCH it up
-    const tables = pipeline?.getTableList() || [];
-    tables.push(qualifier);
-    await axios.patch(`/api/pipelines/${pipeline.id}`, { tables: tables.join(",") });
-    // todo: error handling
-    await router.replace(router.asPath);
-  };
-
   if (!pipeline) return;
 
   return (
     <PipelinesLayout pipelines={pipelines}>
       <div className="flex h-full flex-row">
-        <div className="pr-4">
-          <h2 className="font-medium">Datasets</h2>
-          <hr className="mt-1 mb-2" />
-          {schemas.length === 0 ? (
-            <p className="p-2">No schemas defined yet</p>
-          ) : (
-            // todo: ↑ provide CTA to create connections &/or pull data
-            // todo: quick search typeahead
-            <table className="table-auto">
-              <tbody>
-                <tr className="p-2">
-                  <td className="py-2 pl-2">Pipeline</td>
-                  {/* todo: list other pipelines */}
-                  <td className="p-2">
-                    <Link href={"#todo"} className="text-blue-500">
-                      TODO
-                    </Link>
-                  </td>
-                </tr>
-                {schemas.map((schema: Schema) =>
-                  schema.tables.map(table => {
-                    // todo: indicate datasets that are already in the pipeline (can you add a dataset twice?)
-                    const qualifier = `${schema.schema}.${table}`;
-                    const isAdded = pipeline?.getTableList().indexOf(qualifier) >= 0;
-                    if (isAdded) {
-                      return (
-                        <tr key={qualifier} className="p-2 text-gray-500">
-                          <td className="py-2 pl-2">{schema.schema}</td>
-                          <td className="p-2">{table}</td>
-                          <td>
-                            <CheckCircleIcon className="h6 w-6 py-2 pl-1.5 text-green-600" />
-                          </td>
-                        </tr>
-                      );
-                    }
-
-                    return (
-                      <tr
-                        key={qualifier}
-                        onClick={() => handleDatasetSelection(qualifier)}
-                        className="cursor-pointer p-2 transition ease-in-out hover:bg-blue-100"
-                      >
-                        {/* todo: Sentence case \/  */}
-                        <td className="rounded-l py-2 pl-2">{schema.schema}</td>
-                        <td className="p-2 text-blue-500">{table}</td>
-                        <td className="rounded-r"></td>
-                      </tr>
-                    );
-                  }),
-                )}
-              </tbody>
-            </table>
-          )}
-        </div>
+        <DatasetSidebar pipeline={pipeline} schemas={schemas} />
         <div className="w-full overflow-auto">
           <div className="-ml-2 -mt-2 flex flex-col items-baseline pb-2">
             <h3 className="mt-2 mb-1 ml-2  text-xl font-medium leading-6 text-gray-900">{self.name}</h3>
