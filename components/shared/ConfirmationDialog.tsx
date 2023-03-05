@@ -1,15 +1,17 @@
-import { Fragment, useRef, useState } from "react";
+import { Dispatch, Fragment, SetStateAction, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { ExclamationTriangleIcon, QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
 
-// functional component with hooks that takes a function as a parameter and calls it if the confirm button is clicked
+// Usage: {stateX && <ConfirmationDialog onConfirm={...} setState={setStateX} title={...} message={...} /> }
 export default function ConfirmationDialog({
   onConfirm,
+  setState: setParentState,
   title,
   message = "Are you sure you want to do that?",
   isDestructive = false,
 }: {
-  onConfirm: any; // todo: void function that takes no params
+  onConfirm: () => void;
+  setState: Dispatch<SetStateAction<boolean>>;
   title: string;
   message?: string;
   isDestructive?: boolean;
@@ -17,9 +19,15 @@ export default function ConfirmationDialog({
   const [open, setOpen] = useState(true);
   const cancelButtonRef = useRef(null);
 
-  const confirmButtonHandler = () => {
+  // Close the modal, and set the passed in state to false.
+  const close = () => {
     setOpen(false);
+    setParentState(false);
+  };
+
+  const confirmButtonHandler = () => {
     onConfirm();
+    close();
   };
 
   // todo: set colors based on `isDestructive`
@@ -78,14 +86,14 @@ export default function ConfirmationDialog({
                   <button
                     type="button"
                     className={`inline-flex w-full justify-center rounded-md bg-${color}-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-${color}-500 sm:ml-3 sm:w-auto`}
-                    onClick={() => setOpen(false)}
+                    onClick={() => confirmButtonHandler()}
                   >
                     Deactivate
                   </button>
                   <button
                     type="button"
                     className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
-                    onClick={() => confirmButtonHandler()}
+                    onClick={() => close()}
                     ref={cancelButtonRef}
                   >
                     Cancel
