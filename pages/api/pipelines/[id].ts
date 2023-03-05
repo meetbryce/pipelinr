@@ -9,7 +9,6 @@ import invariant from "tiny-invariant";
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
   // todo: Pipeline typings (leverage prisma)
   const { id } = req.query;
-  const { name } = req.body;
 
   // Check request body
   // todo: safety check the req.body https://www.prisma.io/docs/concepts/components/prisma-client/advanced-type-safety/prisma-validator
